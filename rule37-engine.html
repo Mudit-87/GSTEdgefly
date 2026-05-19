@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rule 37 Engine — 180-Day ITC Payment Tracker | GSTEdge AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --ink:#0B0F1A;--ink2:#1E2535;--ink3:#4B5568;
+  --surface:#F4F5F7;--surface2:#ECEEF2;
+  --border:rgba(30,37,53,.10);--border2:rgba(30,37,53,.05);
+  --white:#FFFFFF;
+  --accent:#1A56DB;--accent-pale:#EBF0FF;
+  --green:#0C7C4B;--green-pale:#E6F7EE;
+  --red:#C0392B;--red-pale:#FEE2E2;
+  --amber:#B45309;--amber-pale:#FEF3C7;
+  --orange:#C2410C;--orange-pale:#FFF7ED;
+  --purple:#6C3FC5;--purple-pale:#F0EBFF;
+  --teal:#0B7285;--teal-pale:#E0F4F8;
+  --gold:#B45309;--gold-pale:#FFFBEB;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+  --display:'Syne',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--surface);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--ink);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;font-weight:800;color:#fff}
+.brand-name{font-family:var(--display);font-size:15px;font-weight:700;color:#fff}
+.brand-module{font-size:10px;font-weight:500;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:2px 8px;border-radius:20px;font-family:var(--mono)}
+.topbar-law{font-size:11px;color:rgba(255,255,255,.35);font-family:var(--mono)}
+.topbar-back{color:rgba(255,255,255,.5);font-size:12px;text-decoration:none;border:1px solid rgba(255,255,255,.12);padding:5px 12px;border-radius:7px;transition:all .15s}
+.topbar-back:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ── MAIN ── */
+.main{max-width:1280px;margin:0 auto;padding:24px}
+
+/* ── LEGAL BANNER ── */
+.legal-banner{background:var(--ink);border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:flex-start;gap:16px}
+.lb-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.lb-body{flex:1}
+.lb-title{font-family:var(--display);font-size:15px;font-weight:600;color:#fff;margin-bottom:6px}
+.lb-points{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}
+.lb-point{font-size:11px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:5px;font-family:var(--mono)}
+.lb-point::before{content:'§';color:var(--amber);font-size:12px}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.card-header{padding:16px 20px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink)}
+.card-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.card-body{padding:20px}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric.red::before{background:var(--red)}
+.metric.amber::before{background:var(--amber)}
+.metric.green::before{background:var(--green)}
+.metric.blue::before{background:var(--accent)}
+.metric.orange::before{background:var(--orange)}
+.metric.purple::before{background:var(--purple)}
+.m-label{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:6px}
+.m-value{font-family:var(--display);font-size:20px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:2px}
+.m-sub{font-size:10px;color:var(--ink3)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#1346C5}
+.btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--surface)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#085f3a}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#a93226}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#92400e}
+.btn-sm{padding:5px 11px;font-size:12px}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill-red{background:var(--red-pale);color:var(--red)}
+.pill-amber{background:var(--amber-pale);color:var(--amber)}
+.pill-green{background:var(--green-pale);color:var(--green)}
+.pill-blue{background:var(--accent-pale);color:var(--accent)}
+.pill-orange{background:var(--orange-pale);color:var(--orange)}
+.pill-purple{background:var(--purple-pale);color:var(--purple)}
+.pill-gray{background:var(--surface2);color:var(--ink3)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;background:var(--surface);border-radius:9px;padding:3px;margin-bottom:18px}
+.tab{flex:1;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--ink3);transition:all .15s;white-space:nowrap}
+.tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table thead th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);font-weight:600;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table tbody tr{border-bottom:1px solid var(--border2);transition:background .1s}
+.data-table tbody tr:hover{background:var(--surface)}
+.data-table tbody td{padding:10px 12px;vertical-align:middle;color:var(--ink)}
+.data-table tbody tr:last-child{border-bottom:none}
+.mono{font-family:var(--mono);font-size:11px}
+
+/* ── STATUS ROWS ── */
+.row-critical td:first-child{border-left:3px solid var(--red)}
+.row-warning td:first-child{border-left:3px solid var(--amber)}
+.row-clear td:first-child{border-left:3px solid var(--green)}
+.row-reavail td:first-child{border-left:3px solid var(--accent)}
+
+/* ── PROGRESS BAR ── */
+.age-bar{width:100%;height:6px;background:var(--surface2);border-radius:6px;overflow:hidden;margin-top:3px}
+.age-fill{height:100%;border-radius:6px;transition:width .3s}
+
+/* ── FORM ── */
+.form-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px;font-weight:500}
+.form-input,.form-select{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);transition:border-color .15s;background:var(--white)}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+
+/* ── ALERT ── */
+.alert{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:9px;margin-bottom:12px;font-size:12px;line-height:1.5}
+.alert-icon{font-size:16px;flex-shrink:0}
+.alert-title{font-weight:600;margin-bottom:2px}
+.alert-red{background:var(--red-pale);border:1px solid rgba(192,57,43,.15);color:var(--red)}
+.alert-amber{background:var(--amber-pale);border:1px solid rgba(180,83,9,.15);color:var(--amber)}
+.alert-green{background:var(--green-pale);border:1px solid rgba(12,124,75,.15);color:var(--green)}
+.alert-blue{background:var(--accent-pale);border:1px solid rgba(26,86,219,.15);color:var(--accent)}
+
+/* ── UPLOAD ── */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--accent-pale)}
+.upload-zone.done{border-color:var(--green);background:var(--green-pale);border-style:solid}
+
+/* ── FORMULA BOX ── */
+.formula{background:var(--ink);color:#fff;border-radius:10px;padding:16px 20px;font-family:var(--mono);font-size:13px;margin-bottom:14px;line-height:2}
+.formula-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:8px}
+.formula-eq{color:#A7F3D0;font-size:14px;font-weight:500}
+.formula-var{color:rgba(255,255,255,.55);font-size:12px}
+.formula-note{color:var(--amber-pale);font-size:11px;margin-top:6px}
+
+/* ── COUNTDOWN ── */
+.countdown-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-family:var(--mono);font-size:11px;font-weight:500}
+.cb-red{background:var(--red-pale);color:var(--red)}
+.cb-orange{background:var(--orange-pale);color:var(--orange)}
+.cb-amber{background:var(--amber-pale);color:var(--amber)}
+.cb-green{background:var(--green-pale);color:var(--green)}
+.cb-blue{background:var(--accent-pale);color:var(--accent)}
+.cb-gray{background:var(--surface2);color:var(--ink3)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--white);border-radius:16px;padding:32px;width:580px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-title{font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--ink3);margin-bottom:20px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border2)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateX(120%);transition:transform .3s cubic-bezier(.34,1.56,.64,1);max-width:380px}
+.toast.show{transform:translateX(0)}
+
+/* ── INTEREST BOX ── */
+.interest-box{background:var(--red-pale);border:1px solid rgba(192,57,43,.15);border-radius:10px;padding:16px 20px;margin-bottom:12px}
+.interest-title{font-size:13px;font-weight:600;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.interest-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(192,57,43,.1)}
+.interest-row:last-child{border-bottom:none;font-weight:600;padding-top:8px;margin-top:4px;font-size:13px}
+
+/* ── GSTR3B ── */
+.gstr3b-box{background:var(--ink);border-radius:10px;padding:16px 20px}
+.g3b-header{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.g3b-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px}
+.g3b-row:last-child{border-bottom:none;padding-top:12px;margin-top:4px}
+.g3b-label{color:rgba(255,255,255,.6)}
+.g3b-table{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4)}
+.g3b-value{font-family:var(--mono);font-size:13px;font-weight:500}
+.g3b-row.reversal .g3b-value{color:#FCA5A5}
+.g3b-row.reavail .g3b-value{color:#A7F3D0}
+.g3b-row.total .g3b-value{color:#FCD34D;font-size:15px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}.form-row,.form-row-4{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.metrics{grid-template-columns:repeat(2,1fr)}.form-row,.form-row-4{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE — same as main app -->
+<div id="r37-pwgate" style="position:fixed;inset:0;background:#0B0F1A;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column">
+  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:40px 36px;width:380px;max-width:92vw;text-align:center">
+    <div style="width:48px;height:48px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;font-weight:800;color:#fff;margin:0 auto 20px">G</div>
+    <div style="font-family:var(--display);font-size:20px;font-weight:700;color:#fff;margin-bottom:6px">GSTEdge AI</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px">Rule 37 — 180-Day Payment Engine</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.25);margin-bottom:28px">Enter your access code to continue</div>
+    <input type="password" id="r37-pw-field" placeholder="Access code"
+      style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 14px;font-family:var(--sans);font-size:14px;color:#fff;text-align:center;margin-bottom:10px"
+      onkeydown="if(event.key==='Enter')r37CheckPW()">
+    <div id="r37-pw-error" style="display:none;font-size:12px;color:#FCA5A5;margin-bottom:10px"></div>
+    <button onclick="r37CheckPW()"
+      style="width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px">
+      Access Engine →
+    </button>
+    <a href="index.html" style="font-size:12px;color:rgba(255,255,255,.3);text-decoration:none">← Back to GSTEdge AI Platform</a>
+  </div>
+</div>
+
+<!-- APP (hidden until password entered) -->
+<div id="r37-app" style="display:none">
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon">G</div>
+    <span class="brand-name">GSTEdge AI</span>
+    <span class="brand-module">Rule 37 Engine</span>
+  </div>
+  <div class="topbar-law">Sec 16(2) CGST Act · Rule 37 CGST Rules · Notif 26/2022-CT · Rule 88B</div>
+  <a href="index.html" class="topbar-back">← Back to Platform</a>
+</div>
+
+<div class="main">
+
+  <!-- LEGAL BANNER -->
+  <div class="legal-banner">
+    <div class="lb-icon">⚖️</div>
+    <div class="lb-body">
+      <div class="lb-title">Rule 37 — 180-Day Payment Rule Engine &nbsp;|&nbsp; CGST Rules 2017 as amended by Notification 26/2022-CT (w.e.f. 01.10.2022)</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;line-height:1.6">
+        If ITC is claimed on an invoice but payment (value + tax) is not made to the supplier within 180 days of the invoice date, ITC must be reversed proportionate to the unpaid amount in GSTR-3B Table 4(B)(2). Interest under Sec 50 applies if ITC was utilised. ITC can be re-availed upon payment — no time limit. RCM invoices are excluded.
+      </div>
+      <div class="lb-points">
+        <span class="lb-point">180 days from invoice date (not receipt date)</span>
+        <span class="lb-point">Proportionate reversal — only unpaid portion</span>
+        <span class="lb-point">Interest @ 18% p.a. if ITC utilised (Rule 88B)</span>
+        <span class="lb-point">Report in GSTR-3B Table 4(B)(2)</span>
+        <span class="lb-point">Re-avail after payment — no time limit</span>
+        <span class="lb-point">RCM invoices excluded</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showSection('tracker')">📊 Live Tracker</div>
+    <div class="tab" onclick="showSection('add')">➕ Add Invoice</div>
+    <div class="tab" onclick="showSection('upload')">📤 Bulk Upload</div>
+    <div class="tab" onclick="showSection('gstr3b')">📋 GSTR-3B Working</div>
+    <div class="tab" onclick="showSection('drc03')">📄 DRC-03 Worksheet</div>
+    <div class="tab" onclick="showSection('gstr9')">📑 GSTR-9 Annual</div>
+    <div class="tab" onclick="showSection('calculator')">🧮 Interest Calculator</div>
+  </div>
+
+  <!-- ══ SECTION: LIVE TRACKER ══ -->
+  <div id="section-tracker">
+
+    <!-- Metrics -->
+    <div class="metrics" id="tracker-metrics">
+      <div class="metric red"><div class="m-label">Reversal Due Now</div><div class="m-value" id="m-due-now">0</div><div class="m-sub">overdue 180 days</div></div>
+      <div class="metric orange"><div class="m-label">Due This Month</div><div class="m-value" id="m-due-month">0</div><div class="m-sub">180 days within 30 days</div></div>
+      <div class="metric amber"><div class="m-label">Watch List</div><div class="m-value" id="m-watch">0</div><div class="m-sub">within 60 days</div></div>
+      <div class="metric green"><div class="m-label">Cleared</div><div class="m-value" id="m-cleared">0</div><div class="m-sub">paid — ITC safe</div></div>
+      <div class="metric blue"><div class="m-label">Total ITC Tracked</div><div class="m-value" id="m-itc-total">₹0</div><div class="m-sub">across all invoices</div></div>
+      <div class="metric purple"><div class="m-label">ITC at Risk</div><div class="m-value" id="m-itc-risk">₹0</div><div class="m-sub">reversal required</div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div id="tracker-alerts"></div>
+
+    <!-- Invoice table -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Invoice Ageing Register — Rule 37 Monitor</div>
+          <div class="card-sub" id="table-sub">All invoices where ITC claimed and payment status tracked</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="filter-status" onchange="renderTable()" class="form-select" style="width:160px;font-size:12px;padding:5px 10px">
+            <option value="all">All Invoices</option>
+            <option value="overdue">🔴 Reversal Due</option>
+            <option value="warning">🟠 Due This Month</option>
+            <option value="watch">🟡 Watch List</option>
+            <option value="cleared">✓ Cleared</option>
+            <option value="reavailed">↩ Re-availed</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="exportExcel()">⬇ Export Excel</button>
+          <button class="btn btn-primary btn-sm" onclick="showSection('add')">+ Add Invoice</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Supplier Name</th>
+              <th>GSTIN</th>
+              <th>Invoice No</th>
+              <th>Invoice Date</th>
+              <th>Invoice Value</th>
+              <th>ITC Claimed (₹)</th>
+              <th>Amount Paid (₹)</th>
+              <th>Payment Date</th>
+              <th>Balance Unpaid</th>
+              <th>180-Day Deadline</th>
+              <th>Days Left / Over</th>
+              <th>ITC to Reverse</th>
+              <th>Interest Est.</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoice-tbody"></tbody>
+        </table>
+      </div>
+      <div id="empty-state" style="padding:40px;text-align:center;display:none">
+        <div style="font-size:36px;margin-bottom:12px">📋</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px">No invoices added yet</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:16px">Add invoices manually or upload a bulk Excel file to start tracking</div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button class="btn btn-primary btn-sm" onclick="showSection('add')">+ Add First Invoice</button>
+          <button class="btn btn-ghost btn-sm" onclick="showSection('upload')">📤 Bulk Upload</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadSampleData()">🧪 Load Sample Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: ADD INVOICE ══ -->
+  <div id="section-add" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Add Invoice to Rule 37 Tracker</div>
+          <div class="card-sub">Enter invoice and payment details — the engine computes deadline, reversal amount, and interest automatically</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showSection('tracker')">← Back to Tracker</button>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-blue">
+          <span class="alert-icon">ℹ️</span>
+          <div><div class="alert-title">RCM invoices are excluded from Rule 37</div>
+          Do not add invoices where tax is payable under Reverse Charge Mechanism (Sec 9(3)/9(4)). Rule 37 applies only to regular inward supplies where supplier collects and pays GST.</div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:14px">
+          <div>
+            <label class="form-label">Supplier Name *</label>
+            <input type="text" class="form-input" id="f-supplier" placeholder="ABC Industries Pvt Ltd">
+          </div>
+          <div>
+            <label class="form-label">Supplier GSTIN *</label>
+            <input type="text" class="form-input" id="f-gstin" placeholder="27AAAAA1234A1Z5" maxlength="15" style="font-family:var(--mono)" oninput="this.value=this.value.toUpperCase()">
+          </div>
+          <div>
+            <label class="form-label">Invoice Number *</label>
+            <input type="text" class="form-input" id="f-invno" placeholder="INV/2026-27/001">
+          </div>
+        </div>
+
+        <div class="form-row-4" style="margin-bottom:14px">
+          <div>
+            <label class="form-label">Invoice Date *</label>
+            <input type="date" class="form-input" id="f-invdate">
+          </div>
+          <div>
+            <label class="form-label">Invoice Value (₹) *</label>
+            <input type="number" class="form-input" id="f-invvalue" placeholder="100000" min="0">
+          </div>
+          <div>
+            <label class="form-label">ITC Claimed (₹) *</label>
+            <input type="number" class="form-input" id="f-itc" placeholder="18000" min="0">
+          </div>
+          <div>
+            <label class="form-label">GST Rate</label>
+            <select class="form-select" id="f-rate">
+              <option value="0.18">18%</option>
+              <option value="0.12">12%</option>
+              <option value="0.05">5%</option>
+              <option value="0.28">28%</option>
+              <option value="0.03">3%</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:14px">
+          <div>
+            <label class="form-label">Amount Paid to Supplier (₹)</label>
+            <input type="number" class="form-input" id="f-paid" placeholder="0 if unpaid" min="0" oninput="autoCalcITCClaimed()">
+          </div>
+          <div>
+            <label class="form-label">Payment Date</label>
+            <input type="date" class="form-input" id="f-paydate">
+          </div>
+          <div>
+            <label class="form-label">ITC Utilised from ECL?</label>
+            <select class="form-select" id="f-utilised">
+              <option value="yes">Yes — interest applies if overdue</option>
+              <option value="no">No — interest not applicable (Rule 88B)</option>
+              <option value="partial">Partially utilised</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-bottom:20px">
+          <div>
+            <label class="form-label">Document Type</label>
+            <select class="form-select" id="f-doctype">
+              <option value="invoice">Tax Invoice</option>
+              <option value="debit">Debit Note</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Notes</label>
+            <input type="text" class="form-input" id="f-notes" placeholder="e.g. Disputed — legal notice sent">
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary" style="width:100%" onclick="addInvoice()">
+              + Add to Tracker
+            </button>
+          </div>
+        </div>
+
+        <!-- Live preview -->
+        <div id="add-preview" style="display:none">
+          <div style="font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Live Computation Preview</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" id="preview-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: BULK UPLOAD ══ -->
+  <div id="section-upload" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Bulk Upload — Rule 37 Invoice Register</div>
+          <div class="card-sub">Upload your Purchase Ledger or Creditors Ageing report in Excel format</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showSection('tracker')">← Back</button>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-amber">
+          <span class="alert-icon">⚠️</span>
+          <div><div class="alert-title">Required columns in your Excel file</div>
+          Supplier Name · GSTIN · Invoice Number · Invoice Date (DD-MM-YYYY) · Invoice Value (₹) · ITC Claimed (₹) · Amount Paid (₹) · Payment Date · Notes (optional)
+          </div>
+        </div>
+
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('bulk-file').click()" style="margin-bottom:16px">
+          <input type="file" id="bulk-file" style="display:none" accept=".xlsx,.xls,.csv" onchange="handleBulkUpload(event)">
+          <div style="font-size:28px;margin-bottom:10px">📊</div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px">Drop your Excel file here or click to browse</div>
+          <div style="font-size:12px;color:var(--ink3)">Excel (.xlsx) · CSV · Tally Creditor Ageing Export</div>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="downloadBulkTemplate()">⬇ Download Template</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadSampleData()">🧪 Load 10 Sample Invoices</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: GSTR-3B WORKING ══ -->
+  <div id="section-gstr3b" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">GSTR-3B Table 4(B)(2) — Rule 37 Reversals</div></div>
+        <div class="card-body">
+          <div class="formula">
+            <div class="formula-label">Proportionate ITC Reversal Formula (Post Oct 2022 Amendment)</div>
+            <div class="formula-eq">ITC to Reverse = (Unpaid Amount ÷ Invoice Value) × ITC Claimed</div>
+            <div class="formula-var">Unpaid Amount = Invoice Value − Amount Paid to Supplier</div>
+            <div class="formula-var">Interest = Reversed ITC × 18% × (Days from ITC Claim to Reversal ÷ 365)</div>
+            <div class="formula-note">⚠ Interest applies only if ITC was utilised from Electronic Credit Ledger (Rule 88B)</div>
+          </div>
+          <div class="gstr3b-box" id="gstr3b-display">
+            <div class="g3b-header">GSTR-3B Table 4 — Rule 37 Working</div>
+            <div class="g3b-row">
+              <span class="g3b-label">4(A)(5) — ITC available (before reversal)</span>
+              <div style="text-align:right">
+                <span class="g3b-table">4(A)(5)</span>
+                <span class="g3b-value" id="g3-available" style="display:block;color:#fff">₹0</span>
+              </div>
+            </div>
+            <div class="g3b-row reversal">
+              <span class="g3b-label">4(B)(2) — ITC reversal under Rule 37</span>
+              <div style="text-align:right">
+                <span class="g3b-table">4(B)(2)</span>
+                <span class="g3b-value" id="g3-reversal" style="display:block">₹0</span>
+              </div>
+            </div>
+            <div class="g3b-row reavail">
+              <span class="g3b-label">4(D)(1) — Re-availed ITC (after payment)</span>
+              <div style="text-align:right">
+                <span class="g3b-table">4(D)(1)</span>
+                <span class="g3b-value" id="g3-reavail" style="display:block">₹0</span>
+              </div>
+            </div>
+            <div class="g3b-row total">
+              <span class="g3b-label" style="color:rgba(255,255,255,.8);font-weight:600">Net ITC after Rule 37 adjustment</span>
+              <span class="g3b-value" id="g3-net">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Month-wise Reversal & Re-availment Schedule</div></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Month of Action</th><th>Type</th><th>Supplier</th><th>ITC Amount</th><th>Interest</th><th>GSTR-3B Table</th></tr></thead>
+            <tbody id="schedule-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: INTEREST CALCULATOR ══ -->
+  <div id="section-calculator" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Rule 37 Interest Calculator</div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+            <div>
+              <label class="form-label">ITC Claimed Amount (₹)</label>
+              <input type="number" class="form-input" id="calc-itc" placeholder="18000" oninput="calcInterest()">
+            </div>
+            <div>
+              <label class="form-label">Invoice Value (₹)</label>
+              <input type="number" class="form-input" id="calc-invval" placeholder="100000" oninput="calcInterest()">
+            </div>
+            <div>
+              <label class="form-label">Amount Paid (₹)</label>
+              <input type="number" class="form-input" id="calc-paid" placeholder="0" oninput="calcInterest()">
+            </div>
+            <div>
+              <label class="form-label">Invoice Date</label>
+              <input type="date" class="form-input" id="calc-invdate" oninput="calcInterest()">
+            </div>
+            <div>
+              <label class="form-label">ITC Claim Date</label>
+              <input type="date" class="form-input" id="calc-claimdate" oninput="calcInterest()">
+            </div>
+            <div>
+              <label class="form-label">Date of Reversal / Today</label>
+              <input type="date" class="form-input" id="calc-reversal" oninput="calcInterest()">
+            </div>
+          </div>
+          <div>
+            <label class="form-label">ITC Utilised from ECL?</label>
+            <select class="form-select" id="calc-utilised" onchange="calcInterest()" style="margin-bottom:16px">
+              <option value="yes">Yes — interest applicable</option>
+              <option value="no">No — interest NOT applicable (Rule 88B)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="calcInterest()">Calculate Now</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Computation Result</div></div>
+        <div class="card-body" id="calc-result">
+          <div style="text-align:center;padding:30px;color:var(--ink3)">
+            <div style="font-size:28px;margin-bottom:10px">🧮</div>
+            <div style="font-size:13px">Enter invoice details on the left to compute</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal notes -->
+    <div class="card">
+      <div class="card-header"><div class="card-title">Legal Reference — Rule 37 Key Provisions</div></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">When to Reverse</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7">After 180 days from <b>invoice date</b> (not ITC claim date, not goods receipt date). Reverse in the GSTR-3B of the month immediately following the 180-day mark. Report in Table 4(B)(2).</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Interest Rate</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7"><b>18% per annum</b> under Sec 50(1). Computed from date of ITC claim to date of reversal. <b>Important:</b> Interest applies ONLY if ITC was utilised from the Electronic Credit Ledger (Rule 88B). If ITC sits unutilised in ECL, no interest.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Re-availment</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7">After reversing and making payment to the supplier, ITC can be <b>re-availed with NO time limit</b>. Report re-availment in GSTR-3B Table 4(D)(1) in the month of payment. No interest on re-availed ITC.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Proportionate Rule</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7">Post Oct 2022 amendment: reverse ITC only on the <b>unpaid proportion</b>. If you paid 60% of invoice, reverse ITC on only the remaining 40%. Formula: (Unpaid ÷ Invoice Value) × ITC Claimed.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">RCM Exclusion</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7">Rule 37 does <b>NOT apply</b> to invoices under Reverse Charge Mechanism (Sec 9(3) and 9(4)). Only forward charge invoices where supplier collects and pays GST are covered.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Rule 37A Difference</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.7">Rule 37 = <b>buyer's non-payment</b> to supplier within 180 days. Rule 37A = <b>supplier's non-filing</b> of GSTR-3B (different trigger, different engine). Do not confuse the two.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: DRC-03 WORKSHEET ══ -->
+  <div id="section-drc03" style="display:none">
+
+    <div class="alert alert-amber">
+      <span class="alert-icon">⚠️</span>
+      <div><div class="alert-title">DRC-03 — Voluntary Payment of Interest on ITC Reversal</div>
+      If ITC was utilised from the Electronic Credit Ledger before the 180-day reversal, interest under Sec 50 must be paid via DRC-03 (voluntary payment). This section computes your DRC-03 liability invoice-wise and provides the complete working for filing.</div>
+    </div>
+
+    <!-- DRC-03 Summary -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" id="drc03-metrics">
+      <div class="metric red"><div class="m-label">Total Interest Due</div><div class="m-value" id="drc-total-int">₹0</div><div class="m-sub">Sec 50 · 18% p.a.</div></div>
+      <div class="metric orange"><div class="m-label">Invoices with Interest</div><div class="m-value" id="drc-count">0</div><div class="m-sub">ITC utilised + overdue</div></div>
+      <div class="metric amber"><div class="m-label">ITC to Reverse</div><div class="m-value" id="drc-total-rev">₹0</div><div class="m-sub">Table 4(B)(2)</div></div>
+      <div class="metric green"><div class="m-label">DRC-03 Filed</div><div class="m-value" id="drc-filed">₹0</div><div class="m-sub">already paid</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">DRC-03 — Invoice-wise Interest Computation</div>
+          <div class="card-sub">Only invoices where ITC was utilised from ECL — interest @ 18% p.a. from claim date to reversal date</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="exportDRC03Excel()">⬇ Export DRC-03 Working</button>
+          <button class="btn btn-red btn-sm" onclick="window.print()">🖨 Print Worksheet</button>
+        </div>
+      </div>
+
+      <!-- Formula -->
+      <div style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border2)">
+        <div class="formula" style="margin:0">
+          <div class="formula-label">DRC-03 Interest Formula — Rule 88B · Sec 50</div>
+          <div class="formula-eq">Interest = ITC Reversed × 18% × (Days from Claim Date to Reversal Date ÷ 365)</div>
+          <div class="formula-var">Interest applies ONLY if ITC was utilised from Electronic Credit Ledger (Rule 88B(3))</div>
+          <div class="formula-var">If ITC balance in ECL was sufficient and not utilised — NIL interest (Rule 88B Explanation I)</div>
+          <div class="formula-note">⚠ Note: Debate exists whether 18% (Sec 50(1)) or 24% (Sec 50(3)) applies. Safe position: use 18% and disclose basis.</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Supplier</th>
+              <th>Invoice No</th>
+              <th>Invoice Date</th>
+              <th>ITC Claim Date</th>
+              <th>Reversal Date</th>
+              <th>Days (Claim→Reversal)</th>
+              <th>ITC Reversed (₹)</th>
+              <th>Interest Rate</th>
+              <th>Interest Amount (₹)</th>
+              <th>DRC-03 Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="drc03-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="drc03-empty" style="padding:32px;text-align:center;display:none">
+        <div style="font-size:32px;margin-bottom:10px">✅</div>
+        <div style="font-size:14px;font-weight:600;color:var(--green)">No DRC-03 liability</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">No overdue invoices with utilised ITC — or no invoices tracked yet</div>
+      </div>
+    </div>
+
+    <!-- DRC-03 Filing Guidance -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-header"><div class="card-title">How to File DRC-03 — Step by Step</div></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:20px;margin-bottom:8px">1️⃣</div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:4px">GST Portal Login</div>
+            <div style="font-size:11px;color:var(--ink3);line-height:1.6">Log in at gst.gov.in → Services → Ledgers → Electronic Liability Register → Create DRC-03</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:20px;margin-bottom:8px">2️⃣</div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:4px">Select Reason</div>
+            <div style="font-size:11px;color:var(--ink3);line-height:1.6">Select <b>"Sec 50 interest"</b> as the reason. Select tax period. Enter interest amount from this worksheet.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:20px;margin-bottom:8px">3️⃣</div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:4px">Pay from ECL / Cash</div>
+            <div style="font-size:11px;color:var(--ink3);line-height:1.6">Interest must be paid in CASH — cannot use ITC balance. Add to Electronic Cash Ledger via challan if insufficient balance.</div>
+          </div>
+          <div style="background:var(--surface);border-radius:8px;padding:14px">
+            <div style="font-size:20px;margin-bottom:8px">4️⃣</div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:4px">File & Record</div>
+            <div style="font-size:11px;color:var(--ink3);line-height:1.6">Submit DRC-03. Note the ARN. Come back here and mark as "DRC-03 Filed" against each invoice. Reflects in GSTR-9 Table 9.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION: GSTR-9 ANNUAL ══ -->
+  <div id="section-gstr9" style="display:none">
+
+    <div class="alert alert-blue">
+      <span class="alert-icon">📑</span>
+      <div><div class="alert-title">GSTR-9 Annual Return — Rule 37 Reporting</div>
+      All ITC reversals during the financial year under Rule 37 must be reported in GSTR-9 Table 7A. Re-availments go in Table 12B. This section auto-compiles your full-year Rule 37 position for GSTR-9 and GSTR-9C reconciliation.</div>
+    </div>
+
+    <!-- FY selector -->
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+      <div>
+        <label class="form-label">Financial Year</label>
+        <select class="form-select" id="fy-selector" onchange="renderGSTR9()" style="width:160px">
+          <option value="2025-26">FY 2025-26</option>
+          <option value="2024-25">FY 2024-25</option>
+          <option value="2023-24">FY 2023-24</option>
+        </select>
+      </div>
+      <div style="align-self:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="exportGSTR9Excel()">⬇ Export GSTR-9 Working</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <!-- GSTR-9 Tables -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">GSTR-9 Table References — Rule 37</div></div>
+        <div class="card-body">
+          <div class="gstr3b-box">
+            <div class="g3b-header">GSTR-9 Annual Return — Rule 37 Extracts</div>
+            <div class="g3b-row reversal">
+              <div>
+                <div class="g3b-label">Table 7A — ITC reversed under Rule 37</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Total reversal in the FY · Cumulative from all GSTR-3B returns</div>
+              </div>
+              <div style="text-align:right">
+                <div class="g3b-table">Table 7A</div>
+                <div class="g3b-value" id="g9-7a">₹0</div>
+              </div>
+            </div>
+            <div class="g3b-row reavail">
+              <div>
+                <div class="g3b-label">Table 12B — ITC re-availed under Rule 37</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Post-payment re-availments during the FY</div>
+              </div>
+              <div style="text-align:right">
+                <div class="g3b-table">Table 12B</div>
+                <div class="g3b-value" id="g9-12b">₹0</div>
+              </div>
+            </div>
+            <div class="g3b-row">
+              <div>
+                <div class="g3b-label">Table 9 — Interest paid via DRC-03</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Sum of DRC-03 payments during FY</div>
+              </div>
+              <div style="text-align:right">
+                <div class="g3b-table">Table 9</div>
+                <div class="g3b-value" id="g9-int">₹0</div>
+              </div>
+            </div>
+            <div class="g3b-row">
+              <div>
+                <div class="g3b-label">Table 13 — ITC still to be re-availed</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Reversed but not yet paid — pending re-availment</div>
+              </div>
+              <div style="text-align:right">
+                <div class="g3b-table">Table 13</div>
+                <div class="g3b-value" id="g9-pending" style="color:#FCD34D">₹0</div>
+              </div>
+            </div>
+            <div class="g3b-row total">
+              <span class="g3b-label" style="color:rgba(255,255,255,.8);font-weight:600">Net ITC impact (Rule 37 only) for the FY</span>
+              <span class="g3b-value" id="g9-net">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month-wise FY summary -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">Month-wise Position — Full Financial Year</div></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Month</th><th>Invoices Due</th><th>ITC Reversed</th><th>ITC Re-availed</th><th>Interest</th><th>Net Position</th></tr></thead>
+            <tbody id="fy-month-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending re-availment list -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Pending Re-availment Register — Reversed but Not Yet Re-availed</div>
+          <div class="card-sub">Pay these suppliers to unlock the ITC. Re-avail in GSTR-3B Table 4(D)(1). No time limit.</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Supplier</th><th>Invoice No</th><th>Invoice Date</th><th>ITC Reversed (₹)</th><th>Reversed In</th><th>Unpaid Balance (₹)</th><th>Action</th></tr></thead>
+          <tbody id="pending-reavail-tbody"></tbody>
+        </table>
+      </div>
+      <div id="pending-reavail-empty" style="padding:24px;text-align:center;color:var(--ink3);font-size:13px;display:none">
+        ✅ No pending re-availments — all reversed ITCs have been re-availed or are fully paid.
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /main -->
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal-box">
+    <div class="modal-title">Record Payment to Supplier</div>
+    <div class="modal-sub" id="pay-modal-sub">Update payment details for this invoice</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label class="form-label">Amount Paid (₹) *</label>
+        <input type="number" class="form-input" id="pay-amount" placeholder="Full or partial amount">
+      </div>
+      <div>
+        <label class="form-label">Payment Date *</label>
+        <input type="date" class="form-input" id="pay-date">
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="form-label">Payment Reference / UTR</label>
+      <input type="text" class="form-input" id="pay-ref" placeholder="NEFT/RTGS/UPI reference">
+    </div>
+    <div id="pay-preview-box" style="margin-bottom:14px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-green" onclick="savePayment()">✓ Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════════════════════════════════
+let invoices = [];
+let editPaymentIdx = null;
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+
+try { invoices = JSON.parse(localStorage.getItem('r37_invoices') || '[]'); } catch(e) {}
+function save() { try { localStorage.setItem('r37_invoices', JSON.stringify(invoices)); } catch(e){} }
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+  document.getElementById('section-' + id).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabs = ['tracker','add','upload','gstr3b','calculator'];
+  const idx = tabs.indexOf(id);
+  if (idx >= 0) document.querySelectorAll('.tab')[idx].classList.add('active');
+
+  if (id === 'gstr3b') renderGSTR3B();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CORE COMPUTATION ENGINE
+// ═══════════════════════════════════════════════════════════════════
+function computeInvoice(inv) {
+  const invDate   = new Date(inv.invDate); invDate.setHours(0,0,0,0);
+  const deadline  = new Date(invDate); deadline.setDate(deadline.getDate() + 180);
+  const daysToDeadline = Math.round((deadline - TODAY) / 86400000);
+  const isOverdue = daysToDeadline < 0;
+  const invValue  = parseFloat(inv.invValue) || 0;
+  const itcClaimed = parseFloat(inv.itcClaimed) || 0;
+  const amtPaid   = parseFloat(inv.amtPaid) || 0;
+
+  // Proportionate reversal (post Oct 2022)
+  const unpaid    = Math.max(0, invValue - amtPaid);
+  const itcToReverse = invValue > 0 ? (unpaid / invValue) * itcClaimed : 0;
+
+  // Is fully paid?
+  const isCleared = amtPaid >= invValue;
+
+  // Interest — only if ITC utilised and reversal is triggered
+  let interest = 0;
+  if (!isCleared && isOverdue && inv.itcUtilised === 'yes') {
+    const claimDate = inv.claimDate ? new Date(inv.claimDate) : invDate;
+    const reversalDate = TODAY;
+    const days = Math.max(0, Math.round((reversalDate - claimDate) / 86400000));
+    interest = (itcToReverse * 0.18 * days) / 365;
+  }
+
+  // Status classification
+  let status;
+  if (isCleared) {
+    status = inv.reversed ? 'reavailed' : 'cleared';
+  } else if (isOverdue) {
+    status = 'overdue';
+  } else if (daysToDeadline <= 30) {
+    status = 'warning';
+  } else if (daysToDeadline <= 60) {
+    status = 'watch';
+  } else {
+    status = 'safe';
+  }
+
+  return {
+    ...inv,
+    invDate, deadline, daysToDeadline, isOverdue,
+    invValue, itcClaimed, amtPaid, unpaid,
+    itcToReverse: Math.round(itcToReverse * 100) / 100,
+    interest: Math.round(interest * 100) / 100,
+    isCleared, status,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDER TABLE
+// ═══════════════════════════════════════════════════════════════════
+function renderTable() {
+  const filter  = document.getElementById('filter-status')?.value || 'all';
+  const computed = invoices.map(computeInvoice);
+  const filtered = filter === 'all' ? computed : computed.filter(r => {
+    if (filter === 'overdue')  return r.status === 'overdue';
+    if (filter === 'warning')  return r.status === 'warning';
+    if (filter === 'watch')    return r.status === 'watch';
+    if (filter === 'cleared')  return r.status === 'cleared';
+    if (filter === 'reavailed') return r.status === 'reavailed';
+    return true;
+  });
+
+  updateMetrics(computed);
+
+  const tbody = document.getElementById('invoice-tbody');
+  const empty = document.getElementById('empty-state');
+
+  if (!invoices.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const statusConfig = {
+    overdue:  { row:'row-critical', pill:'pill-red',    label:'🔴 Reversal Due' },
+    warning:  { row:'row-warning',  pill:'pill-orange',  label:'🟠 Due This Month' },
+    watch:    { row:'row-warning',  pill:'pill-amber',   label:'🟡 Watch (60 days)' },
+    safe:     { row:'row-clear',    pill:'pill-green',   label:'🟢 Safe' },
+    cleared:  { row:'row-clear',    pill:'pill-green',   label:'✓ Paid & Cleared' },
+    reavailed:{ row:'row-reavail',  pill:'pill-blue',    label:'↩ ITC Re-availed' },
+  };
+
+  // Countdown badge
+  function countdownBadge(r) {
+    if (r.isCleared) return `<span class="countdown-badge cb-green">✓ Paid</span>`;
+    const d = r.daysToDeadline;
+    if (d < 0)   return `<span class="countdown-badge cb-red">${Math.abs(d)} days OVERDUE</span>`;
+    if (d <= 7)  return `<span class="countdown-badge cb-red">${d} days left</span>`;
+    if (d <= 30) return `<span class="countdown-badge cb-orange">${d} days left</span>`;
+    if (d <= 60) return `<span class="countdown-badge cb-amber">${d} days left</span>`;
+    return `<span class="countdown-badge cb-green">${d} days left</span>`;
+  }
+
+  // Age bar
+  function ageBar(r) {
+    if (r.isCleared) return '<div class="age-bar"><div class="age-fill" style="width:100%;background:var(--green)"></div></div>';
+    const pct = Math.min(100, Math.max(0, Math.round((180 + r.daysToDeadline) / 180 * 100)));
+    const col = r.daysToDeadline < 0 ? 'var(--red)' : r.daysToDeadline <= 30 ? 'var(--orange)' : r.daysToDeadline <= 60 ? 'var(--amber)' : 'var(--green)';
+    return `<div class="age-bar"><div class="age-fill" style="width:${pct}%;background:${col}"></div></div>`;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => {
+    const sc = statusConfig[r.status] || statusConfig.safe;
+    const origIdx = invoices.indexOf(invoices.find(x => x.id === r.id));
+    return `<tr class="${sc.row}">
+      <td style="font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.supplier}">${r.supplier}</td>
+      <td class="mono">${r.gstin}</td>
+      <td class="mono">${r.invNo}</td>
+      <td class="mono">${fmtDate(r.invDate)}</td>
+      <td class="mono">${fmtRs(r.invValue)}</td>
+      <td class="mono" style="color:var(--accent)">${fmtRs(r.itcClaimed)}</td>
+      <td class="mono">${fmtRs(r.amtPaid)}</td>
+      <td class="mono" style="color:var(--ink3)">${r.payDate ? fmtDateStr(r.payDate) : '—'}</td>
+      <td class="mono" style="color:${r.unpaid>0?'var(--red)':'var(--green)'}">${r.unpaid > 0 ? fmtRs(r.unpaid) : '₹0 ✓'}</td>
+      <td class="mono" style="font-weight:500">${fmtDate(r.deadline)}</td>
+      <td>${countdownBadge(r)}${ageBar(r)}</td>
+      <td class="mono" style="color:var(--red);font-weight:600">${r.itcToReverse > 0 && !r.isCleared ? fmtRs(r.itcToReverse) : '—'}</td>
+      <td class="mono" style="color:var(--red)">${r.interest > 0 ? fmtRs(r.interest) : '—'}</td>
+      <td><span class="pill ${sc.pill}">${sc.label}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          ${!r.isCleared ? `<button class="btn btn-green btn-sm" onclick="openPayModal(${origIdx})" title="Record Payment">💳 Pay</button>` : ''}
+          ${r.isOverdue && !r.isCleared ? `<button class="btn btn-red btn-sm" onclick="markReversed(${origIdx})" title="Mark ITC as Reversed in GSTR-3B">↩ Reverse</button>` : ''}
+          ${r.reversed && r.isCleared ? `<button class="btn btn-primary btn-sm" onclick="markReavailed(${origIdx})" title="Mark ITC Re-availed in GSTR-3B">✓ Re-avail</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="deleteInvoice(${origIdx})" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-sub').textContent =
+    `Showing ${filtered.length} of ${invoices.length} invoices · As of ${fmtDate(TODAY)}`;
+}
+
+function updateMetrics(computed) {
+  const dueNow   = computed.filter(r => r.status === 'overdue').length;
+  const dueMonth = computed.filter(r => r.status === 'warning').length;
+  const watch    = computed.filter(r => r.status === 'watch').length;
+  const cleared  = computed.filter(r => r.status === 'cleared' || r.status === 'reavailed').length;
+  const itcTotal = computed.reduce((a,r)=>a+r.itcClaimed,0);
+  const itcRisk  = computed.filter(r=>!r.isCleared).reduce((a,r)=>a+r.itcToReverse,0);
+
+  document.getElementById('m-due-now').textContent   = dueNow;
+  document.getElementById('m-due-month').textContent = dueMonth;
+  document.getElementById('m-watch').textContent     = watch;
+  document.getElementById('m-cleared').textContent   = cleared;
+  document.getElementById('m-itc-total').textContent = fmtRs(itcTotal);
+  document.getElementById('m-itc-risk').textContent  = fmtRs(itcRisk);
+
+  // Alerts
+  const alertEl = document.getElementById('tracker-alerts');
+  let html = '';
+  if (dueNow > 0) {
+    const risk = computed.filter(r=>r.status==='overdue').reduce((a,r)=>a+r.itcToReverse,0);
+    const int  = computed.filter(r=>r.status==='overdue').reduce((a,r)=>a+r.interest,0);
+    html += `<div class="alert alert-red"><span class="alert-icon">🔴</span><div>
+      <div class="alert-title">${dueNow} invoice${dueNow>1?'s':''} overdue — ITC reversal of ${fmtRs(risk)} required in current GSTR-3B</div>
+      Reverse in Table 4(B)(2) of GSTR-3B immediately.${int>0?' Estimated interest: '+fmtRs(int)+' (if ITC was utilised from ECL)':' Interest not applicable — ITC not utilised from ECL.'} Report reversal then mark as reversed in this tracker.</div>
+    </div>`;
+  }
+  if (dueMonth > 0) {
+    html += `<div class="alert alert-amber"><span class="alert-icon">⚠️</span><div>
+      <div class="alert-title">${dueMonth} invoice${dueMonth>1?'s':''} reaching 180-day limit within 30 days</div>
+      Pay these suppliers now to avoid ITC reversal obligation. If payment is not possible, prepare reversal amounts for next GSTR-3B.</div>
+    </div>`;
+  }
+  if (!dueNow && !dueMonth && invoices.length > 0) {
+    html += `<div class="alert alert-green"><span class="alert-icon">✅</span><div>
+      No immediate Rule 37 reversals due. All tracked invoices are within the 180-day window or fully paid.</div>
+    </div>`;
+  }
+  alertEl.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ADD INVOICE
+// ═══════════════════════════════════════════════════════════════════
+function addInvoice() {
+  const supplier = document.getElementById('f-supplier').value.trim();
+  const gstin    = document.getElementById('f-gstin').value.trim().toUpperCase();
+  const invNo    = document.getElementById('f-invno').value.trim();
+  const invDate  = document.getElementById('f-invdate').value;
+  const invValue = parseFloat(document.getElementById('f-invvalue').value) || 0;
+  const itcClaimed = parseFloat(document.getElementById('f-itc').value) || 0;
+  const amtPaid  = parseFloat(document.getElementById('f-paid').value) || 0;
+  const payDate  = document.getElementById('f-paydate').value;
+  const utilised = document.getElementById('f-utilised').value;
+  const doctype  = document.getElementById('f-doctype').value;
+  const notes    = document.getElementById('f-notes').value.trim();
+
+  if (!supplier) { showToast('⚠ Enter supplier name'); return; }
+  if (!invDate)  { showToast('⚠ Enter invoice date'); return; }
+  if (!invValue) { showToast('⚠ Enter invoice value'); return; }
+  if (!itcClaimed){ showToast('⚠ Enter ITC claimed amount'); return; }
+
+  const inv = {
+    id: Date.now().toString(),
+    supplier, gstin, invNo, invDate, invValue, itcClaimed,
+    amtPaid, payDate, itcUtilised: utilised, doctype, notes,
+    claimDate: invDate, // default: ITC claimed in same month as invoice
+    reversed: false, reavailed: false,
+    addedOn: new Date().toLocaleDateString('en-IN')
+  };
+
+  invoices.push(inv);
+  save();
+
+  // Clear form
+  ['f-supplier','f-gstin','f-invno','f-invdate','f-invvalue','f-itc','f-paid','f-paydate','f-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('add-preview').style.display = 'none';
+
+  showSection('tracker');
+  renderTable();
+  showToast('✅ Invoice added — ' + supplier + ' · ' + invNo);
+}
+
+// Live preview while typing
+['f-invdate','f-invvalue','f-itc','f-paid'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateAddPreview);
+});
+
+function updateAddPreview() {
+  const invDate  = document.getElementById('f-invdate').value;
+  const invValue = parseFloat(document.getElementById('f-invvalue').value) || 0;
+  const itc      = parseFloat(document.getElementById('f-itc').value) || 0;
+  const paid     = parseFloat(document.getElementById('f-paid').value) || 0;
+  if (!invDate || !invValue || !itc) { document.getElementById('add-preview').style.display='none'; return; }
+
+  const mock = { invDate, invValue, itcClaimed:itc, amtPaid:paid, itcUtilised:'yes', reversed:false };
+  const c    = computeInvoice(mock);
+  document.getElementById('add-preview').style.display = 'block';
+  document.getElementById('preview-grid').innerHTML = `
+    <div style="background:var(--surface);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">180-Day Deadline</div>
+      <div style="font-family:var(--display);font-size:15px;font-weight:700;color:var(--ink);margin-top:4px">${fmtDate(c.deadline)}</div>
+    </div>
+    <div style="background:${c.daysToDeadline<0?'var(--red-pale)':c.daysToDeadline<=30?'var(--amber-pale)':'var(--green-pale)'};border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">Days Remaining</div>
+      <div style="font-family:var(--display);font-size:15px;font-weight:700;color:${c.daysToDeadline<0?'var(--red)':c.daysToDeadline<=30?'var(--amber)':'var(--green)'};margin-top:4px">${c.daysToDeadline < 0 ? Math.abs(c.daysToDeadline)+' OVERDUE' : c.daysToDeadline+' days'}</div>
+    </div>
+    <div style="background:var(--red-pale);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">ITC to Reverse</div>
+      <div style="font-family:var(--display);font-size:15px;font-weight:700;color:var(--red);margin-top:4px">${c.itcToReverse > 0 && !c.isCleared ? fmtRs(c.itcToReverse) : '₹0 — Fully Paid'}</div>
+    </div>
+    <div style="background:var(--surface);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">Unpaid Balance</div>
+      <div style="font-family:var(--display);font-size:15px;font-weight:700;color:${c.unpaid>0?'var(--red)':'var(--green)'};margin-top:4px">${c.unpaid > 0 ? fmtRs(c.unpaid) : '✓ Fully Paid'}</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PAYMENT MODAL
+// ═══════════════════════════════════════════════════════════════════
+function openPayModal(idx) {
+  editPaymentIdx = idx;
+  const inv = invoices[idx];
+  const c   = computeInvoice(inv);
+  document.getElementById('pay-modal-sub').textContent =
+    inv.supplier + ' · ' + inv.invNo + ' · Invoice Value: ' + fmtRs(c.invValue) + ' · Paid so far: ' + fmtRs(c.amtPaid);
+  document.getElementById('pay-amount').value = '';
+  document.getElementById('pay-date').value   = new Date().toISOString().split('T')[0];
+  document.getElementById('pay-ref').value    = '';
+
+  // Show impact preview
+  const unpaid = c.unpaid;
+  document.getElementById('pay-preview-box').innerHTML = `
+    <div style="background:var(--surface);border-radius:8px;padding:12px;font-size:12px;color:var(--ink2)">
+      <b>Outstanding balance:</b> ${fmtRs(unpaid)} &nbsp;|&nbsp;
+      <b>ITC at risk if not paid:</b> ${fmtRs(c.itcToReverse)} &nbsp;|&nbsp;
+      <b>Deadline:</b> ${fmtDate(c.deadline)}
+      ${c.isOverdue ? '<br><span style="color:var(--red);font-weight:600">⚠ Already overdue — pay the full amount to enable ITC re-availment after reversing</span>' : ''}
+    </div>`;
+
+  document.getElementById('modal-payment').classList.add('open');
+}
+
+function savePayment() {
+  const amt  = parseFloat(document.getElementById('pay-amount').value) || 0;
+  const date = document.getElementById('pay-date').value;
+  const ref  = document.getElementById('pay-ref').value.trim();
+  if (!amt || amt <= 0) { showToast('⚠ Enter payment amount'); return; }
+  if (!date) { showToast('⚠ Enter payment date'); return; }
+
+  const inv    = invoices[editPaymentIdx];
+  const newPaid = (parseFloat(inv.amtPaid)||0) + amt;
+  invoices[editPaymentIdx] = { ...inv, amtPaid: newPaid, payDate: date, payRef: ref };
+  save(); closeModal(); renderTable();
+  showToast('✅ Payment recorded — ' + fmtRs(amt) + ' on ' + fmtDateStr(date));
+}
+
+function markReversed(idx) {
+  invoices[idx] = { ...invoices[idx], reversed: true };
+  save(); renderTable();
+  showToast('↩ ITC marked as reversed in GSTR-3B Table 4(B)(2)');
+}
+
+function markReavailed(idx) {
+  invoices[idx] = { ...invoices[idx], reavailed: true, status: 'reavailed' };
+  save(); renderTable();
+  showToast('✅ ITC marked as re-availed in GSTR-3B Table 4(D)(1)');
+}
+
+function deleteInvoice(idx) {
+  if (!confirm('Remove this invoice from Rule 37 tracker?')) return;
+  invoices.splice(idx, 1);
+  save(); renderTable();
+  showToast('Invoice removed');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INTEREST CALCULATOR
+// ═══════════════════════════════════════════════════════════════════
+function calcInterest() {
+  const itc       = parseFloat(document.getElementById('calc-itc').value) || 0;
+  const invVal    = parseFloat(document.getElementById('calc-invval').value) || 0;
+  const paid      = parseFloat(document.getElementById('calc-paid').value) || 0;
+  const invDateStr = document.getElementById('calc-invdate').value;
+  const claimStr  = document.getElementById('calc-claimdate').value;
+  const revStr    = document.getElementById('calc-reversal').value;
+  const utilised  = document.getElementById('calc-utilised').value;
+
+  if (!itc || !invVal || !invDateStr) {
+    document.getElementById('calc-result').innerHTML = '<div style="text-align:center;padding:30px;color:var(--ink3)"><div style="font-size:28px;margin-bottom:10px">🧮</div><div style="font-size:13px">Enter invoice details on the left</div></div>';
+    return;
+  }
+
+  const invDate    = new Date(invDateStr); invDate.setHours(0,0,0,0);
+  const claimDate  = claimStr ? new Date(claimStr) : invDate;
+  const revDate    = revStr ? new Date(revStr) : TODAY;
+  const deadline   = new Date(invDate); deadline.setDate(deadline.getDate() + 180);
+  const daysLeft   = Math.round((deadline - TODAY) / 86400000);
+  const unpaid     = Math.max(0, invVal - paid);
+  const itcToRev   = invVal > 0 ? (unpaid / invVal) * itc : 0;
+  const claimToRev = Math.max(0, Math.round((revDate - claimDate) / 86400000));
+  const interest   = utilised === 'yes' ? (itcToRev * 0.18 * claimToRev) / 365 : 0;
+
+  const statusColor = daysLeft < 0 ? 'var(--red)' : daysLeft <= 30 ? 'var(--orange)' : 'var(--green)';
+  const statusText  = daysLeft < 0 ? `⚠ ${Math.abs(daysLeft)} days OVERDUE` : `${daysLeft} days remaining`;
+
+  document.getElementById('calc-result').innerHTML = `
+    <div class="interest-box">
+      <div class="interest-title">⚖️ Rule 37 Computation Result</div>
+      <div class="interest-row"><span>Invoice Value</span><span>${fmtRs(invVal)}</span></div>
+      <div class="interest-row"><span>Amount Paid to Supplier</span><span>${fmtRs(paid)}</span></div>
+      <div class="interest-row"><span>Unpaid Balance</span><span style="color:var(--red)">${fmtRs(unpaid)}</span></div>
+      <div class="interest-row"><span>Proportionate ITC to Reverse</span><span style="color:var(--red);font-weight:600">${fmtRs(Math.round(itcToRev*100)/100)}</span></div>
+      <div class="interest-row"><span>Formula: (${fmtRs(unpaid)} ÷ ${fmtRs(invVal)}) × ${fmtRs(itc)}</span><span style="font-size:10px;color:var(--ink3)">= ${((unpaid/invVal)*100).toFixed(1)}% of ITC</span></div>
+      <div class="interest-row"><span>180-Day Deadline</span><span style="font-weight:600">${fmtDate(deadline)}</span></div>
+      <div class="interest-row"><span>Status</span><span style="color:${statusColor};font-weight:600">${statusText}</span></div>
+      <div class="interest-row"><span>ITC Claim to Reversal Period</span><span>${claimToRev} days</span></div>
+      <div class="interest-row"><span>Interest Rate (Sec 50)</span><span>18% p.a.</span></div>
+      <div class="interest-row"><span>Estimated Interest</span><span style="color:${utilised==='yes'?'var(--red)':'var(--green)'};font-weight:600">${utilised==='yes' ? fmtRs(Math.round(interest*100)/100) : '₹0 (ITC not utilised — Rule 88B)'}</span></div>
+      <div class="interest-row" style="border-top:2px solid rgba(192,57,43,.2);margin-top:4px;padding-top:8px"><span style="font-weight:600">Total Outflow (ITC + Interest)</span><span style="font-weight:700;color:var(--red);font-size:15px">${fmtRs(Math.round((itcToRev + interest)*100)/100)}</span></div>
+    </div>
+    <div style="background:var(--surface);border-radius:8px;padding:12px;font-size:12px;color:var(--ink2);line-height:1.8">
+      <b>GSTR-3B Action:</b> Report ${fmtRs(Math.round(itcToRev*100)/100)} in <b>Table 4(B)(2)</b> in the month following the 180-day deadline.<br>
+      <b>After payment:</b> Re-avail ${fmtRs(Math.round(itcToRev*100)/100)} in <b>Table 4(D)(1)</b> — no time limit.
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GSTR-3B WORKING
+// ═══════════════════════════════════════════════════════════════════
+function renderGSTR3B() {
+  const computed = invoices.map(computeInvoice);
+  const totalITC = computed.reduce((a,r)=>a+r.itcClaimed,0);
+  const totalRev = computed.filter(r=>r.status==='overdue'||r.reversed).reduce((a,r)=>a+r.itcToReverse,0);
+  const totalReavail = computed.filter(r=>r.reavailed||r.status==='reavailed').reduce((a,r)=>a+r.itcToReverse,0);
+  const net = totalITC - totalRev + totalReavail;
+
+  document.getElementById('g3-available').textContent = fmtRs(totalITC);
+  document.getElementById('g3-reversal').textContent  = '−' + fmtRs(totalRev);
+  document.getElementById('g3-reavail').textContent   = '+' + fmtRs(totalReavail);
+  document.getElementById('g3-net').textContent       = fmtRs(net);
+
+  // Month-wise schedule
+  const schedule = [];
+  computed.forEach(r => {
+    if ((r.status === 'overdue' || r.reversed) && !r.reavailed) {
+      const m = getMonthAfter180(r.invDate);
+      schedule.push({ month: m, type: 'Reversal', supplier: r.supplier, amt: r.itcToReverse, interest: r.interest, table: '4(B)(2)' });
+    }
+    if (r.reavailed && r.payDate) {
+      const d = new Date(r.payDate);
+      schedule.push({ month: d.toLocaleString('en-IN',{month:'short',year:'numeric'}), type: 'Re-availment', supplier: r.supplier, amt: r.itcToReverse, interest: 0, table: '4(D)(1)' });
+    }
+  });
+
+  schedule.sort((a,b)=>a.month.localeCompare(b.month));
+
+  const sbody = document.getElementById('schedule-tbody');
+  if (!schedule.length) {
+    sbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--ink3)">No reversals or re-availments to schedule</td></tr>';
+    return;
+  }
+  sbody.innerHTML = schedule.map(s=>`<tr>
+    <td style="font-weight:500">${s.month}</td>
+    <td><span class="pill ${s.type==='Reversal'?'pill-red':'pill-green'}">${s.type}</span></td>
+    <td>${s.supplier}</td>
+    <td class="mono" style="color:${s.type==='Reversal'?'var(--red)':'var(--green)'}">${fmtRs(s.amt)}</td>
+    <td class="mono" style="color:var(--red)">${s.interest > 0 ? fmtRs(s.interest) : '—'}</td>
+    <td><code style="font-family:var(--mono);font-size:11px;background:var(--surface);padding:2px 6px;border-radius:4px">${s.table}</code></td>
+  </tr>`).join('');
+}
+
+function getMonthAfter180(invDate) {
+  const d = new Date(invDate);
+  d.setDate(d.getDate() + 181); // day after 180
+  return d.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BULK UPLOAD
+// ═══════════════════════════════════════════════════════════════════
+function handleBulkUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const wb  = XLSX.read(ev.target.result, {type:'binary', cellDates:true});
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, {defval:'', raw:false});
+
+      let added = 0;
+      raw.forEach(r => {
+        const supplier = String(r['Supplier Name']||r['Supplier']||r['Party Name']||'').trim();
+        const invDate  = parseUploadDate(String(r['Invoice Date']||r['Date']||''));
+        const invValue = parseFloat(String(r['Invoice Value']||r['Value']||'').replace(/,/g,'')) || 0;
+        const itc      = parseFloat(String(r['ITC Claimed']||r['ITC']||'').replace(/,/g,'')) || 0;
+
+        if (!supplier || !invDate || !invValue || !itc) return;
+
+        invoices.push({
+          id: Date.now().toString() + Math.random(),
+          supplier,
+          gstin:    String(r['GSTIN']||r['Supplier GSTIN']||'').toUpperCase().trim(),
+          invNo:    String(r['Invoice Number']||r['Invoice No']||'').trim(),
+          invDate,
+          invValue, itcClaimed: itc,
+          amtPaid:  parseFloat(String(r['Amount Paid']||'0').replace(/,/g,''))||0,
+          payDate:  parseUploadDate(String(r['Payment Date']||'')),
+          itcUtilised: 'yes',
+          doctype: 'invoice',
+          notes:  String(r['Notes']||'').trim(),
+          claimDate: invDate,
+          reversed: false, reavailed: false,
+          addedOn: new Date().toLocaleDateString('en-IN')
+        });
+        added++;
+      });
+
+      save();
+      const zone = document.getElementById('upload-zone');
+      zone.classList.add('done');
+      zone.innerHTML = `<div style="font-size:22px;margin-bottom:8px">✅</div><div style="font-size:14px;font-weight:600;color:var(--green)">${added} invoices imported from ${file.name}</div>`;
+      setTimeout(() => { showSection('tracker'); renderTable(); }, 1200);
+      showToast('✅ ' + added + ' invoices imported from ' + file.name);
+    } catch(err) {
+      showToast('❌ Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsBinaryString(file);
+}
+
+function parseUploadDate(s) {
+  if (!s) return '';
+  s = String(s).trim();
+  // DD-MM-YYYY or DD/MM/YYYY
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (m) {
+    const y = m[3].length === 2 ? '20'+m[3] : m[3];
+    return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  }
+  // Already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+  return '';
+}
+
+function downloadBulkTemplate() {
+  const wb = XLSX.utils.book_new();
+  const hdr = ['Supplier Name','GSTIN','Invoice Number','Invoice Date','Invoice Value','ITC Claimed','Amount Paid','Payment Date','Notes'];
+  const sample = ['ABC Industries Pvt Ltd','27AAAAA1234A1Z5','INV/2026-27/001','01-04-2026',118000,18000,0,'',''];
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI — Rule 37 Invoice Upload Template'],
+    ['Date format: DD-MM-YYYY · All amounts in Rupees · Do not include RCM invoices'],
+    [],
+    hdr, sample
+  ]);
+  ws['!cols'] = [22,18,18,14,14,12,12,14,20].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws, 'Rule 37 Register');
+  XLSX.writeFile(wb, 'GSTEdge_Rule37_Template.xlsx');
+  showToast('✅ Template downloaded');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════
+function exportExcel() {
+  if (!invoices.length) { showToast('⚠ No invoices to export'); return; }
+  const computed = invoices.map(computeInvoice);
+  const wb = XLSX.utils.book_new();
+
+  const hdr = ['Supplier Name','GSTIN','Invoice No','Invoice Date','Invoice Value (₹)',
+    'ITC Claimed (₹)','Amount Paid (₹)','Payment Date','Unpaid Balance (₹)',
+    '180-Day Deadline','Days Remaining','ITC to Reverse (₹)','Estimated Interest (₹)',
+    'Status','Reversed in GSTR-3B','Re-availed','Notes'];
+
+  const statusLabel = {overdue:'Reversal Due',warning:'Due This Month',watch:'Watch List',safe:'Safe',cleared:'Cleared',reavailed:'Re-availed'};
+
+  const rows = computed.map(r=>[
+    r.supplier, r.gstin, r.invNo, fmtDate(r.invDate), r.invValue,
+    r.itcClaimed, r.amtPaid, r.payDate ? fmtDateStr(r.payDate) : '',
+    r.unpaid, fmtDate(r.deadline),
+    r.daysToDeadline < 0 ? r.daysToDeadline + ' (OVERDUE)' : r.daysToDeadline,
+    r.itcToReverse, r.interest,
+    statusLabel[r.status]||r.status,
+    r.reversed ? 'Yes' : 'No',
+    r.reavailed ? 'Yes' : 'No',
+    r.notes||''
+  ]);
+
+  // Summary
+  const dueNow = computed.filter(r=>r.status==='overdue');
+  const totalRev = dueNow.reduce((a,r)=>a+r.itcToReverse,0);
+  const totalInt = dueNow.reduce((a,r)=>a+r.interest,0);
+
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI — Rule 37 ITC Reversal Register'],
+    ['Section 16(2) CGST Act · Rule 37 CGST Rules · As of ' + fmtDate(TODAY)],
+    ['DISCLAIMER: For CA/practitioner use only. Verify all figures before GSTR-3B filing.'],
+    [],
+    ['SUMMARY','','',''],
+    ['Total Invoices Tracked', invoices.length,'',''],
+    ['Reversal Due Immediately', dueNow.length,'',''],
+    ['Total ITC to Reverse (₹)', totalRev,'',''],
+    ['Total Estimated Interest (₹)', totalInt,'',''],
+    [],
+    hdr,
+    ...rows
+  ]);
+  ws['!cols'] = [22,18,18,12,14,14,14,12,14,14,12,14,14,14,10,10,20].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws, 'Rule 37 Register');
+
+  // GSTR-3B Working sheet
+  const g3rows = computed.filter(r=>r.status==='overdue'||r.reversed).map(r=>[
+    r.supplier, r.invNo, fmtDate(r.deadline), r.itcToReverse, r.interest, '4(B)(2)',
+    'Reverse in GSTR-3B of ' + getMonthAfter180(r.invDate)
+  ]);
+  if (g3rows.length) {
+    const wsG3 = XLSX.utils.aoa_to_sheet([
+      ['GSTR-3B Table 4(B)(2) — Rule 37 Reversal Working'],
+      ['Supplier','Invoice No','180-Day Deadline','ITC to Reverse (₹)','Interest (₹)','GSTR-3B Table','Action'],
+      ...g3rows
+    ]);
+    XLSX.utils.book_append_sheet(wb, wsG3, 'GSTR-3B Working');
+  }
+
+  XLSX.writeFile(wb, 'GSTEdge_Rule37_Register_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('✅ Rule 37 Register exported with GSTR-3B working sheet');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SAMPLE DATA
+// ═══════════════════════════════════════════════════════════════════
+function loadSampleData() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  function daysAgo(n) {
+    const d = new Date(today); d.setDate(d.getDate()-n);
+    return d.toISOString().split('T')[0];
+  }
+  const samples = [
+    {supplier:'Metro Supplies Ltd',gstin:'27AALCM2791Q1ZR',invNo:'MS/26-27/441',invDate:daysAgo(195),invValue:236000,itcClaimed:36000,amtPaid:0,payDate:'',notes:'Payment disputed — debit note raised',itcUtilised:'yes'},
+    {supplier:'Alpha Traders',gstin:'29AAACT2218M1ZB',invNo:'AT/26-27/112',invDate:daysAgo(182),invValue:118000,itcClaimed:18000,amtPaid:50000,payDate:daysAgo(60),notes:'Partial payment only',itcUtilised:'yes'},
+    {supplier:'Beta Engineers',gstin:'07AABCB6634L1ZK',invNo:'BE/26-27/88',invDate:daysAgo(170),invValue:59000,itcClaimed:9000,amtPaid:0,payDate:'',notes:'',itcUtilised:'no'},
+    {supplier:'TechSoft India',gstin:'33AABCT5832M1ZK',invNo:'TSI-26-27-221',invDate:daysAgo(150),invValue:177000,itcClaimed:27000,amtPaid:177000,payDate:daysAgo(30),notes:'Fully paid',itcUtilised:'yes'},
+    {supplier:'Delta Infrastructure',gstin:'29AABCD3312L1ZR',invNo:'DI/2026/772',invDate:daysAgo(120),invValue:944000,itcClaimed:144000,amtPaid:0,payDate:'',notes:'Large vendor — payment cycle 180 days',itcUtilised:'yes'},
+    {supplier:'Sunrise Trading Co',gstin:'29AAICS4521L1ZM',invNo:'STC/26/442',invDate:daysAgo(90),invValue:82600,itcClaimed:12600,amtPaid:82600,payDate:daysAgo(15),notes:'',itcUtilised:'yes'},
+    {supplier:'Pioneer Corp',gstin:'24AABCP4421K1ZR',invNo:'PC-260109',invDate:daysAgo(45),invValue:141600,itcClaimed:21600,amtPaid:70800,payDate:daysAgo(10),notes:'50% advance paid',itcUtilised:'no'},
+    {supplier:'Epsilon Tech Solutions',gstin:'33AABCE5541M1ZT',invNo:'ET-2026-211',invDate:daysAgo(20),invValue:295000,itcClaimed:45000,amtPaid:0,payDate:'',notes:'New supplier — 90 day credit',itcUtilised:'yes'},
+    {supplier:'Gamma Pharma',gstin:'27AABCG8821P1ZP',invNo:'GP/2026/1092',invDate:daysAgo(200),invValue:65000,itcClaimed:5854,amtPaid:65000,payDate:daysAgo(185),notes:'Paid just in time',itcUtilised:'yes'},
+    {supplier:'Zeta Goods Pvt Ltd',gstin:'24AABCZ2219K1ZB',invNo:'ZG/2026/441',invDate:daysAgo(188),invValue:472000,itcClaimed:72000,amtPaid:118000,payDate:daysAgo(100),notes:'Partial — balance disputed',itcUtilised:'yes'},
+  ];
+  invoices = [];
+  samples.forEach(s => invoices.push({...s, id:Date.now().toString()+Math.random(), claimDate:s.invDate, reversed:false, reavailed:false, doctype:'invoice', addedOn:new Date().toLocaleDateString('en-IN')}));
+  save(); showSection('tracker'); renderTable();
+  showToast('🧪 10 sample invoices loaded — showing real-world Rule 37 scenarios');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════
+function fmtRs(n) {
+  if (!n && n !== 0) return '—';
+  n = Math.round(n);
+  if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + 'Cr';
+  if (n >= 100000)   return '₹' + (n/100000).toFixed(2) + 'L';
+  return '₹' + n.toLocaleString('en-IN');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = typeof d === 'string' ? new Date(d) : d;
+  if (isNaN(dt)) return '—';
+  return dt.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDateStr(s) { return fmtDate(new Date(s)); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast show';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = 'toast', 3500);
+}
+
+function closeModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) closeModal(); });
+
+function autoCalcITCClaimed() {
+  const invVal = parseFloat(document.getElementById('f-invvalue').value)||0;
+  const rate   = parseFloat(document.getElementById('f-rate').value)||0.18;
+  if (invVal && !document.getElementById('f-itc').value) {
+    const taxable = invVal / (1 + rate);
+    document.getElementById('f-itc').value = Math.round(taxable * rate);
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+document.getElementById('f-invdate').value = new Date().toISOString().split('T')[0];
+document.getElementById('calc-reversal').value = new Date().toISOString().split('T')[0];
+// renderTable() called after gate check below
+
+// ═══════════════════════════════════════════════════════════════════
+// ENHANCED showSection — handle new tabs
+// ═══════════════════════════════════════════════════════════════════
+const _origShowSection = showSection;
+function showSection(id) {
+  document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+  document.getElementById('section-' + id).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabs = ['tracker','add','upload','gstr3b','drc03','gstr9','calculator'];
+  const idx  = tabs.indexOf(id);
+  const tabEls = document.querySelectorAll('.tab');
+  if (idx >= 0 && tabEls[idx]) tabEls[idx].classList.add('active');
+  if (id === 'gstr3b')    renderGSTR3B();
+  if (id === 'drc03')     renderDRC03();
+  if (id === 'gstr9')     renderGSTR9();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DRC-03 ENGINE
+// ═══════════════════════════════════════════════════════════════════
+function renderDRC03() {
+  const computed = invoices.map(computeInvoice);
+  // Only invoices that are overdue AND ITC was utilised
+  const liable   = computed.filter(r => (r.status === 'overdue' || r.reversed) && r.itcUtilised === 'yes' && r.itcToReverse > 0);
+
+  const totalInt = liable.reduce((a,r) => a + r.interest, 0);
+  const totalRev = liable.reduce((a,r) => a + r.itcToReverse, 0);
+  const filedAmt = computed.filter(r => r.drc03Filed).reduce((a,r) => a + (r.drc03Interest||0), 0);
+
+  set('drc-total-int', fmtRs(totalInt));
+  set('drc-count',     liable.length);
+  set('drc-total-rev', fmtRs(totalRev));
+  set('drc-filed',     fmtRs(filedAmt));
+
+  const tbody  = document.getElementById('drc03-tbody');
+  const emptyEl = document.getElementById('drc03-empty');
+
+  if (!liable.length) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  tbody.innerHTML = liable.map((r, i) => {
+    const claimDate  = new Date(r.claimDate || r.invDate);
+    const revDate    = TODAY;
+    const days       = Math.max(0, Math.round((revDate - claimDate) / 86400000));
+    const origIdx    = invoices.indexOf(invoices.find(x => x.id === r.id));
+    const filed      = r.drc03Filed;
+
+    return `<tr class="${filed ? 'row-clear' : 'row-critical'}">
+      <td class="mono" style="color:var(--ink3)">${i+1}</td>
+      <td style="font-weight:500">${r.supplier}</td>
+      <td class="mono">${r.invNo}</td>
+      <td class="mono">${fmtDate(r.invDate)}</td>
+      <td class="mono">${fmtDate(claimDate)}</td>
+      <td class="mono">${fmtDate(revDate)}</td>
+      <td class="mono" style="text-align:center"><b>${days}</b> days</td>
+      <td class="mono" style="color:var(--red);font-weight:600">${fmtRs(r.itcToReverse)}</td>
+      <td class="mono">18% p.a. (Sec 50)</td>
+      <td class="mono" style="color:var(--red);font-weight:700">${fmtRs(r.interest)}</td>
+      <td>${filed
+        ? `<span class="pill pill-green">✓ DRC-03 Filed</span><div style="font-size:10px;color:var(--ink3);margin-top:2px">ARN: ${r.drc03Arn||'—'}</div>`
+        : `<span class="pill pill-red">Pending</span>`}</td>
+      <td>
+        ${!filed
+          ? `<button class="btn btn-red btn-sm" onclick="markDRC03Filed(${origIdx})">Mark Filed</button>`
+          : `<button class="btn btn-ghost btn-sm" onclick="unmarkDRC03(${origIdx})">Undo</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Totals row
+  tbody.innerHTML += `<tr style="background:var(--red-pale);font-weight:600">
+    <td colspan="7" style="text-align:right;padding:10px 12px;font-size:13px">TOTAL INTEREST PAYABLE VIA DRC-03</td>
+    <td class="mono" style="color:var(--red)">${fmtRs(totalRev)} <span style="font-size:10px;font-weight:400">(ITC reversal)</span></td>
+    <td></td>
+    <td class="mono" style="color:var(--red);font-size:15px">${fmtRs(totalInt)}</td>
+    <td colspan="2"></td>
+  </tr>`;
+}
+
+function markDRC03Filed(idx) {
+  const arn = prompt('Enter DRC-03 ARN (or press OK to skip):', '') || '';
+  invoices[idx] = { ...invoices[idx], drc03Filed: true, drc03Arn: arn, drc03Date: new Date().toLocaleDateString('en-IN'), drc03Interest: invoices[idx]._computedInterest || 0 };
+  save(); renderDRC03();
+  showToast('✅ DRC-03 marked as filed' + (arn ? ' · ARN: ' + arn : ''));
+}
+function unmarkDRC03(idx) {
+  invoices[idx] = { ...invoices[idx], drc03Filed: false, drc03Arn: '', drc03Date: '' };
+  save(); renderDRC03();
+  showToast('DRC-03 filing mark removed');
+}
+
+function exportDRC03Excel() {
+  const computed = invoices.map(computeInvoice);
+  const liable   = computed.filter(r => (r.status === 'overdue' || r.reversed) && r.itcUtilised === 'yes' && r.itcToReverse > 0);
+  if (!liable.length) { showToast('⚠ No DRC-03 liability to export'); return; }
+
+  const wb  = XLSX.utils.book_new();
+  const hdr = ['#','Supplier Name','Invoice No','Invoice Date','ITC Claim Date',
+    'Reversal Date','Days','ITC Reversed (₹)','Rate','Interest (₹)','DRC-03 Status','ARN'];
+
+  const rows = liable.map((r,i) => {
+    const claimDate = new Date(r.claimDate || r.invDate);
+    const days = Math.max(0, Math.round((TODAY - claimDate) / 86400000));
+    return [i+1, r.supplier, r.invNo, fmtDate(r.invDate), fmtDate(claimDate), fmtDate(TODAY),
+      days, r.itcToReverse, '18% p.a.', r.interest, r.drc03Filed ? 'Filed' : 'Pending', r.drc03Arn||''];
+  });
+
+  const totalInt = liable.reduce((a,r)=>a+r.interest,0);
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI — DRC-03 Interest Computation Worksheet'],
+    ['Section 50 CGST Act · Rule 88B · Interest on ITC Reversal under Rule 37'],
+    ['Generated: ' + fmtDate(TODAY) + ' · VERIFY ALL FIGURES BEFORE DRC-03 FILING'],
+    [],
+    hdr, ...rows,
+    [],
+    ['','','','','','','','TOTAL INTEREST PAYABLE','=>', totalInt,'','']
+  ]);
+  ws['!cols'] = [4,22,18,12,12,12,8,16,10,14,12,18].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws, 'DRC-03 Worksheet');
+  XLSX.writeFile(wb, 'GSTEdge_DRC03_Worksheet_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('✅ DRC-03 worksheet exported');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GSTR-9 ANNUAL ENGINE
+// ═══════════════════════════════════════════════════════════════════
+function renderGSTR9() {
+  const fy     = document.getElementById('fy-selector')?.value || '2025-26';
+  const fyYear = parseInt(fy.split('-')[0]);
+  // April of FY start to March of FY end
+  const fyStart = new Date(fyYear, 3, 1);    // April 1
+  const fyEnd   = new Date(fyYear+1, 2, 31); // March 31
+
+  const computed = invoices.map(computeInvoice);
+
+  // Filter to this FY by invoice date
+  const fyInvoices = computed.filter(r => r.invDate >= fyStart && r.invDate <= fyEnd);
+
+  const totalReversed  = fyInvoices.filter(r => r.reversed || r.status === 'overdue').reduce((a,r) => a + r.itcToReverse, 0);
+  const totalReavailed = fyInvoices.filter(r => r.reavailed).reduce((a,r) => a + r.itcToReverse, 0);
+  const totalInterest  = fyInvoices.filter(r => r.drc03Filed).reduce((a,r) => a + r.interest, 0);
+  const pendingReavail = totalReversed - totalReavailed;
+  const netImpact      = -(totalReversed) + totalReavailed;
+
+  set('g9-7a',      fmtRs(totalReversed));
+  set('g9-12b',     fmtRs(totalReavailed));
+  set('g9-int',     fmtRs(totalInterest));
+  set('g9-pending', fmtRs(pendingReavail));
+  set('g9-net',     fmtRs(netImpact));
+
+  // Month-wise breakdown
+  const MONTH_NAMES = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  const MONTH_KEYS  = [3,4,5,6,7,8,9,10,11,0,1,2]; // JS month numbers
+
+  const monthData = MONTH_KEYS.map((m, i) => {
+    const yr  = m < 3 ? fyYear+1 : fyYear;
+    const mStart = new Date(yr, m, 1);
+    const mEnd   = new Date(yr, m+1, 0);
+
+    const mInvs   = computed.filter(r => r.deadline >= mStart && r.deadline <= mEnd);
+    const rev     = mInvs.filter(r => r.reversed || r.status==='overdue').reduce((a,r)=>a+r.itcToReverse,0);
+    const reavail = mInvs.filter(r => r.reavailed).reduce((a,r)=>a+r.itcToReverse,0);
+    const int     = mInvs.filter(r => r.drc03Filed).reduce((a,r)=>a+r.interest,0);
+    return { label: MONTH_NAMES[i] + ' ' + yr, count: mInvs.length, rev, reavail, int };
+  });
+
+  const tbody = document.getElementById('fy-month-tbody');
+  tbody.innerHTML = monthData.map(m => `<tr>
+    <td style="font-weight:500">${m.label}</td>
+    <td class="mono">${m.count || '—'}</td>
+    <td class="mono" style="color:${m.rev>0?'var(--red)':'var(--ink3)'}">${m.rev > 0 ? fmtRs(m.rev) : '—'}</td>
+    <td class="mono" style="color:${m.reavail>0?'var(--green)':'var(--ink3)'}">${m.reavail > 0 ? fmtRs(m.reavail) : '—'}</td>
+    <td class="mono" style="color:${m.int>0?'var(--red)':'var(--ink3)'}">${m.int > 0 ? fmtRs(m.int) : '—'}</td>
+    <td class="mono" style="font-weight:600;color:${m.rev-m.reavail>0?'var(--red)':'var(--green)'}">${m.rev > 0 || m.reavail > 0 ? fmtRs(m.reavail - m.rev) : '—'}</td>
+  </tr>`).join('');
+
+  // Pending re-availment list
+  const pending = computed.filter(r => r.reversed && !r.reavailed && r.invDate >= fyStart && r.invDate <= fyEnd);
+  const ptbody  = document.getElementById('pending-reavail-tbody');
+  const pempty  = document.getElementById('pending-reavail-empty');
+
+  if (!pending.length) {
+    ptbody.innerHTML = '';
+    pempty.style.display = 'block';
+  } else {
+    pempty.style.display = 'none';
+    const reversalMonth = (inv) => {
+      const d = new Date(inv.invDate); d.setDate(d.getDate()+181);
+      return d.toLocaleString('en-IN',{month:'long',year:'numeric'});
+    };
+    ptbody.innerHTML = pending.map(r => {
+      const origIdx = invoices.indexOf(invoices.find(x=>x.id===r.id));
+      return `<tr>
+        <td style="font-weight:500">${r.supplier}</td>
+        <td class="mono">${r.invNo}</td>
+        <td class="mono">${fmtDate(r.invDate)}</td>
+        <td class="mono" style="color:var(--red);font-weight:600">${fmtRs(r.itcToReverse)}</td>
+        <td style="font-size:11px;color:var(--ink3)">${reversalMonth(r)}</td>
+        <td class="mono" style="color:var(--amber)">${fmtRs(r.unpaid)}</td>
+        <td>
+          <button class="btn btn-green btn-sm" onclick="openPayModal(${origIdx})">💳 Pay Supplier</button>
+          <button class="btn btn-primary btn-sm" onclick="markReavailed(${origIdx})" style="margin-left:4px">↩ Mark Re-availed</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+function exportGSTR9Excel() {
+  const fy     = document.getElementById('fy-selector')?.value || '2025-26';
+  const fyYear = parseInt(fy.split('-')[0]);
+  const fyStart = new Date(fyYear, 3, 1);
+  const fyEnd   = new Date(fyYear+1, 2, 31);
+  const computed = invoices.map(computeInvoice);
+  const fyInvs  = computed.filter(r => r.invDate >= fyStart && r.invDate <= fyEnd);
+
+  const totalReversed  = fyInvs.filter(r => r.reversed||r.status==='overdue').reduce((a,r)=>a+r.itcToReverse,0);
+  const totalReavailed = fyInvs.filter(r => r.reavailed).reduce((a,r)=>a+r.itcToReverse,0);
+  const totalInterest  = fyInvs.filter(r => r.drc03Filed).reduce((a,r)=>a+r.interest,0);
+
+  const wb = XLSX.utils.book_new();
+  const wsSum = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI — GSTR-9 Annual Return · Rule 37 Working · FY ' + fy],
+    ['Generated: ' + fmtDate(TODAY)],
+    [],
+    ['GSTR-9 TABLE','DESCRIPTION','AMOUNT (₹)','NOTES'],
+    ['Table 7A','ITC reversed under Rule 37',totalReversed,'Auto-populated from Rule 37 register'],
+    ['Table 12B','ITC re-availed under Rule 37 after payment',totalReavailed,'Re-availment upon supplier payment'],
+    ['Table 9','Interest paid via DRC-03 (Sec 50)',totalInterest,'From DRC-03 filings'],
+    ['Table 13','ITC reversals eligible for re-availment',totalReversed-totalReavailed,'Balance pending payment to suppliers'],
+    [],
+    ['NET ITC IMPACT','',totalReavailed-totalReversed,'Negative = net reduction in ITC'],
+    [],
+    ['DISCLAIMER','','','Verify all amounts against GSTR-3B filings before GSTR-9 submission.']
+  ]);
+  XLSX.utils.book_append_sheet(wb, wsSum, 'GSTR-9 Summary');
+
+  const hdr = ['Supplier','Invoice No','Invoice Date','ITC Reversed (₹)','Re-availed','Reversal Month','GSTR-9 Table'];
+  const rows = fyInvs.filter(r=>r.reversed||r.status==='overdue').map(r=>[
+    r.supplier, r.invNo, fmtDate(r.invDate), r.itcToReverse,
+    r.reavailed ? 'Yes' : 'No',
+    getMonthAfter180(r.invDate), 'Table 7A'
+  ]);
+  const wsDetail = XLSX.utils.aoa_to_sheet([hdr,...rows]);
+  XLSX.utils.book_append_sheet(wb, wsDetail, 'Detail Register');
+  XLSX.writeFile(wb, 'GSTEdge_GSTR9_Rule37_FY'+fy.replace('-','_')+'.xlsx');
+  showToast('✅ GSTR-9 Rule 37 working exported');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRINT STYLESHEET (injected dynamically)
+// ═══════════════════════════════════════════════════════════════════
+(function() {
+  const style = document.createElement('style');
+  style.media = 'print';
+  style.textContent = `
+    @page { margin: 18mm; size: A4 landscape; }
+    body { font-size: 11px; background: white; }
+    .topbar, .tabs, .btn, .modal-overlay, .toast { display: none !important; }
+    .main { padding: 0; max-width: 100%; }
+    .card { break-inside: avoid; border: 1px solid #ccc; }
+    .legal-banner { background: #f5f5f5 !important; color: #000 !important; border: 1px solid #ccc; }
+    .lb-title, .lb-point { color: #000 !important; }
+    .gstr3b-box { background: #f5f5f5 !important; border: 1px solid #ccc; }
+    .g3b-label, .g3b-value { color: #000 !important; }
+    .formula { background: #f5f5f5 !important; border: 1px solid #ccc; }
+    .formula-eq, .formula-var, .formula-note { color: #000 !important; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 0.5px solid #ccc; padding: 6px 8px; }
+    th { background: #f0f0f0; }
+    [id^="section-"]:not([id="section-drc03"]) { display: none !important; }
+    #section-drc03 { display: block !important; }
+  `;
+  document.head.appendChild(style);
+})();
+
+// Helper to set element text safely
+function set(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+
+// ── RULE 37 PASSWORD GATE ─────────────────────────────────────────
+// Uses the same subscription registry as the main app.
+// Admin panel issues per-client codes — same code unlocks both tools.
+const R37_CODE = 'GSTEdge2024'; // Master fallback only
+
+function r37CheckPW() {
+  var inputEl = document.getElementById('r37-pw-field');
+  var errorEl = document.getElementById('r37-pw-error');
+  var input   = (inputEl ? inputEl.value : '').trim().toUpperCase();
+
+  // Check lockout (shared with main app)
+  try {
+    var lockout = parseInt(localStorage.getItem('gstedge_lockout') || '0');
+    if (lockout && Date.now() < lockout) {
+      var mins = Math.ceil((lockout - Date.now()) / 60000);
+      if (errorEl) { errorEl.textContent = 'Locked for ' + mins + ' more minute' + (mins > 1 ? 's' : '') + '.'; errorEl.style.display = 'block'; }
+      return;
+    }
+    if (lockout) { localStorage.removeItem('gstedge_lockout'); localStorage.removeItem('gstedge_attempts'); }
+  } catch(e) {}
+
+  if (!input) return;
+
+  // Check subscription registry first (same as main app)
+  var subs = {};
+  try { subs = JSON.parse(localStorage.getItem('gstedge_subscriptions') || '{}'); } catch(e) {}
+  var sub     = subs[input] || subs[input.toLowerCase()] || null;
+  var isMaster= (input === R37_CODE.toUpperCase() || input === R37_CODE);
+
+  if (sub || isMaster) {
+    if (sub) {
+      if (!sub.active) {
+        if (errorEl) { errorEl.textContent = 'Your subscription is inactive. Contact contact@gstedgeai.com.'; errorEl.style.display = 'block'; }
+        if (inputEl) inputEl.value = ''; return;
+      }
+      var exp = new Date(sub.expiry); exp.setHours(0,0,0,0);
+      var today = new Date(); today.setHours(0,0,0,0);
+      if (exp < today) {
+        if (errorEl) { errorEl.textContent = 'Subscription expired ' + exp.toLocaleDateString('en-IN') + '. Contact us to renew.'; errorEl.style.display = 'block'; }
+        if (inputEl) inputEl.value = ''; return;
+      }
+    }
+
+    try { sessionStorage.setItem('gstedge_unlocked', 'yes'); } catch(e) {}
+    try { localStorage.removeItem('gstedge_attempts'); localStorage.removeItem('gstedge_lockout'); } catch(e) {}
+
+    var gate = document.getElementById('r37-pwgate');
+    var app  = document.getElementById('r37-app');
+    if (gate) { gate.style.transition = 'opacity .4s'; gate.style.opacity = '0'; setTimeout(function() { gate.style.display = 'none'; }, 420); }
+    if (app)  { setTimeout(function() { app.style.display = 'block'; renderTable(); }, 440); }
+    if (errorEl) errorEl.style.display = 'none';
+    if (inputEl) inputEl.value = '';
+
+  } else {
+    var attempts = 1, remaining = 4;
+    try {
+      attempts  = parseInt(localStorage.getItem('gstedge_attempts') || '0') + 1;
+      localStorage.setItem('gstedge_attempts', attempts);
+      remaining = Math.max(0, 5 - attempts);
+      if (attempts >= 5) localStorage.setItem('gstedge_lockout', Date.now() + 15 * 60 * 1000);
+    } catch(e) {}
+    if (errorEl) {
+      errorEl.textContent = attempts >= 5 ? 'Too many attempts. Locked for 15 minutes.' : 'Invalid code. ' + remaining + ' attempt' + (remaining !== 1 ? 's' : '') + ' remaining.';
+      errorEl.style.display = 'block';
+    }
+    if (inputEl) { inputEl.value = ''; inputEl.focus(); }
+  }
+}
+
+// Check session on page load
+(function() {
+  var unlocked = false;
+  try { unlocked = sessionStorage.getItem('gstedge_unlocked') === 'yes'; } catch(e) {}
+
+  var gate = document.getElementById('r37-pwgate');
+  var app  = document.getElementById('r37-app');
+
+  if (unlocked) {
+    if (gate) gate.style.display = 'none';
+    if (app)  app.style.display  = 'block';
+    renderTable();
+  } else {
+    if (gate) gate.style.display = 'flex';
+    if (app)  app.style.display  = 'none';
+    setTimeout(function() { var pf = document.getElementById('r37-pw-field'); if (pf) pf.focus(); }, 200);
+  }
+
+  // Show lockout if active
+  try {
+    var lockout = parseInt(localStorage.getItem('gstedge_lockout') || '0');
+    if (lockout && Date.now() < lockout) {
+      var mins = Math.ceil((lockout - Date.now()) / 60000);
+      var errEl = document.getElementById('r37-pw-error');
+      if (errEl) { errEl.textContent = 'Too many failed attempts. Locked for ' + mins + ' more minute' + (mins > 1 ? 's' : '') + '.'; errEl.style.display = 'block'; }
+    }
+  } catch(e) {}
+})();
+</script>
+</div><!-- /r37-app -->
+</body>
+</html>
