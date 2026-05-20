@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSTEdge AI — Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --ink:#0B0F1A;--ink2:#1E2535;--ink3:#4B5568;
+  --surface:#F4F5F7;--surface2:#ECEEF2;
+  --border:rgba(30,37,53,.10);--border2:rgba(30,37,53,.05);
+  --white:#fff;--accent:#1A56DB;--accent-pale:#EBF0FF;
+  --green:#0C7C4B;--green-pale:#E6F7EE;
+  --red:#C0392B;--red-pale:#FEE2E2;
+  --amber:#B45309;--amber-pale:#FEF3C7;
+  --gold:#C9A84C;--gold-pale:#FFFBEB;
+  --purple:#6C3FC5;--purple-pale:#F0EBFF;
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Syne',sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--surface);color:var(--ink);font-size:14px;min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--ink);z-index:9999;display:flex;align-items:center;justify-content:center}
+.gate-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:48px 40px;width:400px;max-width:92vw;text-align:center}
+.gate-logo{width:52px;height:52px;background:#1A56DB;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;font-weight:800;color:#fff;margin:0 auto 20px}
+.gate-title{font-family:var(--display);font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
+.gate-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:32px}
+.gate-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:12px 16px;font-size:14px;color:#fff;font-family:var(--sans);text-align:center;margin-bottom:10px}
+.gate-input:focus{outline:none;border-color:#1A56DB}
+.gate-error{font-size:12px;color:#FCA5A5;margin-bottom:10px;display:none}
+.gate-btn{width:100%;background:#1A56DB;color:#fff;border:none;padding:13px;border-radius:9px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer}
+.gate-btn:hover{background:#1346C5}
+.gate-warn{font-size:11px;color:rgba(255,255,255,.2);margin-top:20px;line-height:1.6}
+
+/* APP */
+#app{display:none}
+.topbar{background:var(--ink);height:56px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:32px;height:32px;background:#1A56DB;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;font-weight:800;color:#fff}
+.tb-name{font-family:var(--display);font-size:15px;font-weight:700;color:#fff}
+.tb-badge{font-size:10px;font-weight:500;background:rgba(255,0,0,.15);color:#FCA5A5;border:1px solid rgba(255,100,100,.2);padding:2px 8px;border-radius:20px;font-family:var(--mono)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-time{font-size:11px;color:rgba(255,255,255,.35);font-family:var(--mono)}
+.tb-logout{color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);padding:4px 12px;border-radius:6px;background:transparent}
+.tb-logout:hover{background:rgba(255,255,255,.08);color:#fff}
+
+.main{max-width:1400px;margin:0 auto;padding:24px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--surface2);border-radius:9px;padding:3px;margin-bottom:20px}
+.tab{flex:1;padding:8px 12px;border-radius:7px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--ink3);transition:all .15s}
+.tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* METRIC CARDS */
+.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric.blue::before{background:#1A56DB}.metric.green::before{background:var(--green)}
+.metric.amber::before{background:var(--amber)}.metric.red::before{background:var(--red)}
+.metric.purple::before{background:var(--purple)}.metric.gold::before{background:var(--gold)}
+.m-label{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;font-weight:500;margin-bottom:5px}
+.m-value{font-family:var(--display);font-size:22px;font-weight:700;color:var(--ink);line-height:1}
+.m-sub{font-size:10px;color:var(--ink3);margin-top:3px}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:var(--display);font-size:14px;font-weight:600;color:var(--ink)}
+.card-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table thead th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);font-weight:600;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table tbody tr{border-bottom:1px solid var(--border2);transition:background .1s}
+.data-table tbody tr:hover{background:var(--surface)}
+.data-table tbody td{padding:10px 12px;vertical-align:middle}
+.data-table tbody tr:last-child{border-bottom:none}
+.mono{font-family:var(--mono);font-size:11px}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+.pill-green{background:var(--green-pale);color:var(--green)}
+.pill-amber{background:var(--amber-pale);color:var(--amber)}
+.pill-red{background:var(--red-pale);color:var(--red)}
+.pill-blue{background:var(--accent-pale);color:var(--accent)}
+.pill-purple{background:var(--purple-pale);color:var(--purple)}
+.pill-gray{background:var(--surface2);color:var(--ink3)}
+.pill-gold{background:var(--gold-pale);color:var(--gold)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#1346C5}
+.btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--surface)}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+
+/* CHART BAR */
+.bar-chart{display:flex;flex-direction:column;gap:8px;padding:16px 20px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:12px;color:var(--ink2);width:120px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;background:var(--surface2);border-radius:4px;height:20px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:#fff;transition:width .5s ease;white-space:nowrap}
+.bar-count{font-size:11px;color:var(--ink3);width:40px;text-align:right;flex-shrink:0}
+
+/* NOTICE */
+.notice{background:var(--amber-pale);border:1px solid rgba(180,83,9,.2);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:var(--amber);line-height:1.6}
+.notice strong{font-weight:600}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateX(120%);transition:transform .3s;max-width:340px}
+.toast.show{transform:translateX(0)}
+
+@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ADMIN GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">G</div>
+    <div class="gate-title">GSTEdge AI Admin</div>
+    <div class="gate-sub">Owner access only — not linked from any public page</div>
+    <input type="password" class="gate-input" id="admin-pw" placeholder="Admin password"
+      onkeydown="if(event.key==='Enter')checkAdmin()">
+    <div class="gate-error" id="admin-err"></div>
+    <button class="gate-btn" onclick="checkAdmin()">Enter Admin Panel →</button>
+    <div class="gate-warn">
+      This URL is not listed anywhere on the website.<br>
+      Do not share it. For owner use only.
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="tb-logo">G</div>
+      <span class="tb-name">GSTEdge AI</span>
+      <span class="tb-badge">ADMIN PANEL</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-time" id="clock"></span>
+      <span id="tb-session-note" style="font-size:11px;color:rgba(255,255,255,.3)"></span>
+      <button class="tb-logout" onclick="adminLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="notice">
+      <strong>⚠ Current data scope:</strong> This admin panel shows leads captured from contact forms on this device/browser only. 
+      To see leads from all visitors across all devices, you need a backend database (Supabase). 
+      All form submissions are stored in localStorage and can be exported to Excel at any time.
+      <strong> Phase 2 upgrade will give you real-time data from all visitors.</strong>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="showAdminTab('leads')">📋 Leads &amp; Enquiries</div>
+      <div class="tab" onclick="showAdminTab('subscriptions')">🔑 Subscriptions</div>
+      <div class="tab" onclick="showAdminTab('sources')">📡 Traffic Sources</div>
+      <div class="tab" onclick="showAdminTab('activity')">📈 Activity Log</div>
+      <div class="tab" onclick="showAdminTab('customers')">💳 Customers</div>
+      <div class="tab" onclick="showAdminTab('settings')">⚙ Settings</div>
+    </div>
+
+    <!-- ══ LEADS TAB ══ -->
+    <div id="tab-leads">
+
+      <div class="metrics" id="lead-metrics">
+        <div class="metric blue"><div class="m-label">Total Leads</div><div class="m-value" id="m-total">0</div><div class="m-sub">all time</div></div>
+        <div class="metric green"><div class="m-label">Demo Requests</div><div class="m-value" id="m-demo">0</div><div class="m-sub">booked</div></div>
+        <div class="metric amber"><div class="m-label">Access Requests</div><div class="m-value" id="m-access">0</div><div class="m-sub">pending conversion</div></div>
+        <div class="metric purple"><div class="m-label">GST Queries</div><div class="m-value" id="m-query">0</div><div class="m-sub">engagement</div></div>
+        <div class="metric gold"><div class="m-label">This Month</div><div class="m-value" id="m-thismonth">0</div><div class="m-sub">new leads</div></div>
+        <div class="metric red"><div class="m-label">Follow-up Due</div><div class="m-value" id="m-followup">0</div><div class="m-sub">not converted</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Lead Register</div>
+            <div class="card-sub" id="leads-count-sub">All enquiries captured from contact forms</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="lead-filter" onchange="renderLeads()" style="border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;font-family:var(--sans);color:var(--ink)">
+              <option value="all">All Types</option>
+              <option value="demo">Demo Requests</option>
+              <option value="access">Access Requests</option>
+              <option value="query">GST Queries</option>
+            </select>
+            <select id="status-filter" onchange="renderLeads()" style="border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;font-family:var(--sans);color:var(--ink)">
+              <option value="all">All Status</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="converted">Converted</option>
+              <option value="lost">Lost</option>
+            </select>
+            <button class="btn btn-ghost" onclick="exportLeadsExcel()">⬇ Export Excel</button>
+            <button class="btn btn-primary" onclick="openAddLead()">+ Add Manual Lead</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Date</th><th>Name</th><th>Email</th><th>Firm</th>
+                <th>Type</th><th>Source</th><th>City</th><th>Plan Interest</th>
+                <th>Status</th><th>Notes</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leads-tbody"></tbody>
+          </table>
+        </div>
+        <div id="leads-empty" style="padding:40px;text-align:center;display:none">
+          <div style="font-size:32px;margin-bottom:12px">📋</div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px">No leads captured yet</div>
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:16px">Leads appear here when someone fills a contact form on your landing page, or add manually below</div>
+          <button class="btn btn-primary" onclick="openAddLead()">+ Add First Lead Manually</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SOURCES TAB ══ -->
+    <div id="tab-sources" style="display:none">
+      <div class="metrics">
+        <div class="metric blue"><div class="m-label">Total Visits</div><div class="m-value" id="s-visits">0</div><div class="m-sub">this device</div></div>
+        <div class="metric green"><div class="m-label">Top Source</div><div class="m-value" id="s-topsource" style="font-size:14px">—</div><div class="m-sub">most leads from</div></div>
+        <div class="metric amber"><div class="m-label">States Covered</div><div class="m-value" id="s-states">0</div><div class="m-sub">from lead data</div></div>
+        <div class="metric purple"><div class="m-label">Conversion Rate</div><div class="m-value" id="s-conv">0%</div><div class="m-sub">leads to customers</div></div>
+        <div class="metric gold"><div class="m-label">Avg Response</div><div class="m-value" id="s-resp">—</div><div class="m-sub">target: 24hrs</div></div>
+        <div class="metric red"><div class="m-label">Lost Leads</div><div class="m-value" id="s-lost">0</div><div class="m-sub">no follow-up done</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leads by Source Channel</div></div>
+          <div class="bar-chart" id="source-chart">
+            <div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">Add leads with source info to see chart</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leads by State / City</div></div>
+          <div class="bar-chart" id="state-chart">
+            <div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">Add leads with city info to see chart</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leads by Plan Interest</div></div>
+          <div class="bar-chart" id="plan-chart"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Monthly Lead Trend</div></div>
+          <div class="bar-chart" id="trend-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ACTIVITY TAB ══ -->
+    <div id="tab-activity" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Activity Log</div>
+            <div class="card-sub">All form submissions, status changes, and notes added</div>
+          </div>
+          <button class="btn btn-ghost" onclick="clearActivityLog()">Clear Log</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Timestamp</th><th>Action</th><th>Lead / Name</th><th>Detail</th></tr></thead>
+            <tbody id="activity-tbody"></tbody>
+          </table>
+        </div>
+        <div id="activity-empty" style="padding:32px;text-align:center;color:var(--ink3);font-size:13px;display:none">No activity logged yet</div>
+      </div>
+    </div>
+
+    <!-- ══ CUSTOMERS TAB ══ -->
+    <div id="tab-customers" style="display:none">
+      <div class="metrics">
+        <div class="metric green"><div class="m-label">Active Customers</div><div class="m-value" id="c-active">0</div><div class="m-sub">paying subscribers</div></div>
+        <div class="metric blue"><div class="m-label">Monthly Revenue</div><div class="m-value" id="c-mrr">₹0</div><div class="m-sub">MRR</div></div>
+        <div class="metric gold"><div class="m-label">Annual Revenue</div><div class="m-value" id="c-arr">₹0</div><div class="m-sub">ARR</div></div>
+        <div class="metric amber"><div class="m-label">Renewals Due</div><div class="m-value" id="c-renew">0</div><div class="m-sub">next 60 days</div></div>
+        <div class="metric purple"><div class="m-label">Avg Deal Size</div><div class="m-value" id="c-avg">₹0</div><div class="m-sub">per customer</div></div>
+        <div class="metric red"><div class="m-label">Churned</div><div class="m-value" id="c-churn">0</div><div class="m-sub">cancelled</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Customer Register</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" onclick="exportCustomersExcel()">⬇ Export</button>
+            <button class="btn btn-green" onclick="openAddCustomer()">+ Add Customer</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Firm Name</th><th>CA Name</th><th>Email</th><th>Plan</th><th>Billing</th><th>Amount (₹)</th><th>Start Date</th><th>Renewal Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+        <div id="customers-empty" style="padding:32px;text-align:center;color:var(--ink3);font-size:13px;display:none">
+          No customers added yet. Convert a lead or add manually.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ SUBSCRIPTIONS TAB ══ -->
+    <div id="tab-subscriptions" style="display:none">
+
+      <div class="metrics" id="sub-metrics">
+        <div class="metric green"><div class="m-label">Active Codes</div><div class="m-value" id="sm-active">0</div><div class="m-sub">currently valid</div></div>
+        <div class="metric red"><div class="m-label">Expired</div><div class="m-value" id="sm-expired">0</div><div class="m-sub">need renewal call</div></div>
+        <div class="metric amber"><div class="m-label">Expiring ≤ 30 days</div><div class="m-value" id="sm-expiring30">0</div><div class="m-sub">follow up now</div></div>
+        <div class="metric blue"><div class="m-label">Expiring ≤ 7 days</div><div class="m-value" id="sm-expiring7">0</div><div class="m-sub">urgent renewal</div></div>
+        <div class="metric purple"><div class="m-label">Inactive / Paused</div><div class="m-value" id="sm-inactive">0</div><div class="m-sub">deactivated codes</div></div>
+        <div class="metric gold"><div class="m-label">Total Codes Issued</div><div class="m-value" id="sm-total">0</div><div class="m-sub">all time</div></div>
+      </div>
+
+      <div id="renewal-alerts" style="margin-bottom:16px"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Subscription Registry — All Access Codes</div>
+            <div class="card-sub">Each CA firm gets a unique code. You control activation, expiry, and renewal from here.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="exportSubsExcel()">⬇ Export Excel</button>
+            <button class="btn btn-primary" onclick="openAddSub()">+ Issue New Code</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Firm Name</th><th>CA Name</th><th>Access Code</th>
+                <th>Plan</th><th>Billing</th><th>Amount (₹)</th>
+                <th>Start</th><th>Expiry</th><th>Days Left</th>
+                <th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subs-tbody"></tbody>
+          </table>
+        </div>
+        <div id="subs-empty" style="padding:32px;text-align:center;color:var(--ink3);font-size:13px;display:none">
+          No subscriptions yet. Issue the first access code to your first paying client.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ISSUE CODE MODAL -->
+    <div id="modal-sub" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+      <div style="background:var(--white);border-radius:16px;padding:32px;width:580px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+        <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px" id="sub-modal-title">Issue Access Code</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:20px">Generate a unique access code for a paying client</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Firm Name *</label><input type="text" id="sub-firm" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">CA Name *</label><input type="text" id="sub-caname" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Email</label><input type="email" id="sub-email" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Mobile</label><input type="tel" id="sub-phone" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Plan</label>
+            <select id="sub-plan" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--white)">
+              <option value="Module 01 — Reconciliation">Module 01 — Reconciliation (₹30,000/yr)</option>
+              <option value="Module 02 — Audit Suite">Module 02 — Audit Suite (₹54,000/yr)</option>
+              <option value="Both Modules — Bundle">Both Modules — Bundle</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Billing Cycle</label>
+            <select id="sub-billing" onchange="updateSubExpiry()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--white)">
+              <option value="annual">Annual</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Amount Paid (₹) *</label><input type="number" id="sub-amount" placeholder="30000" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Payment Reference</label><input type="text" id="sub-payref" placeholder="UPI/NEFT/Razorpay ref" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Start Date *</label><input type="date" id="sub-start" oninput="updateSubExpiry()" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+          <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Expiry Date *</label><input type="date" id="sub-expiry" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+        </div>
+
+        <!-- Access code generator -->
+        <div style="background:var(--surface);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:10px;font-weight:500">Access Code for This Client</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="sub-code" placeholder="Will be auto-generated or enter custom"
+              style="flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--mono);font-size:14px;color:var(--ink);letter-spacing:.1em;text-transform:uppercase"
+              oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+            <button class="btn btn-ghost" onclick="generateCode()" style="white-space:nowrap">Auto-Generate</button>
+          </div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:6px;line-height:1.6">
+            This is the code you WhatsApp/email to the client. Keep it 8-12 characters. 
+            Do not reuse codes across clients.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border2)">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="issueSub()">Issue Code &amp; Activate →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS TAB ══ -->
+    <div id="tab-settings" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Admin Password</div></div>
+          <div style="padding:20px">
+            <p style="font-size:13px;color:var(--ink3);margin-bottom:16px;line-height:1.6">Change your admin panel password. This is separate from the tool access code (GSTEdge2024).</p>
+            <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:6px">Current Password</label>
+            <input type="password" id="s-cur-pw" class="form-input" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;margin-bottom:12px">
+            <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:6px">New Password</label>
+            <input type="password" id="s-new-pw" class="form-input" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;margin-bottom:16px">
+            <button class="btn btn-primary" onclick="changeAdminPw()">Update Password</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Data Management</div></div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="exportAllExcel()">⬇ Export Everything to Excel</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="importData()">⬆ Import from Excel Backup</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;color:var(--amber)" onclick="backupToClipboard()">📋 Copy Backup to Clipboard</button>
+            <button class="btn btn-red" style="width:100%;justify-content:center" onclick="clearAllData()">🗑 Clear All Admin Data</button>
+            <p style="font-size:11px;color:var(--ink3);line-height:1.6">Data is stored in localStorage on this browser. Export regularly as backup. Phase 2 will sync to Supabase database.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div id="modal-lead" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:var(--white);border-radius:16px;padding:32px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px" id="lead-modal-title">Add Lead</div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:20px">Manually add a lead from WhatsApp, phone call, or ICAI meeting</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Name *</label><input type="text" id="l-name" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Email *</label><input type="email" id="l-email" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Firm Name</label><input type="text" id="l-firm" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Mobile</label><input type="tel" id="l-phone" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">City / State</label><input type="text" id="l-city" placeholder="Mumbai, Maharashtra" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink)"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Lead Type *</label>
+        <select id="l-type" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--white)">
+          <option value="demo">Demo Request</option>
+          <option value="access">Access Request</option>
+          <option value="query">GST Query</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Source Channel</label>
+        <select id="l-source" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--white)">
+          <option value="">Select source</option>
+          <option>ICAI Chapter / CPE</option>
+          <option>WhatsApp CA Group</option>
+          <option>LinkedIn</option>
+          <option>Referral — CA</option>
+          <option>Google Search</option>
+          <option>Website Form</option>
+          <option>Direct / Cold Call</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Plan Interest</label>
+        <select id="l-plan" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--white)">
+          <option value="">Not specified</option>
+          <option>Module 01 — Reconciliation (₹30,000/yr)</option>
+          <option>Module 02 — Audit Suite (₹54,000/yr)</option>
+          <option>Both Modules — Bundle</option>
+          <option>Not decided</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:16px"><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Notes</label>
+      <textarea id="l-notes" rows="2" placeholder="Context, next steps, follow-up date..." style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;color:var(--ink);resize:vertical"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border2)">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CUSTOMER MODAL -->
+<div id="modal-customer" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:var(--white);border-radius:16px;padding:32px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:20px">Add Customer</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Firm Name *</label><input type="text" id="c-firm" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">CA Name *</label><input type="text" id="c-name" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Email</label><input type="email" id="c-email" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Plan</label>
+        <select id="c-plan" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;background:var(--white)">
+          <option>Module 01 — Reconciliation</option>
+          <option>Module 02 — Audit Suite</option>
+          <option>Both Modules — Bundle</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Billing</label>
+        <select id="c-billing" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;background:var(--white)">
+          <option value="annual">Annual</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Amount Paid (₹)</label><input type="number" id="c-amount" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px" placeholder="30000"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Start Date</label><input type="date" id="c-start" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px"></div>
+      <div><label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:5px">Renewal Date</label><input type="date" id="c-renew" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border2)">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveCustomer()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+<script>
+// ============================================================
+// ADMIN PASSWORD
+// ============================================================
+// Change this to your own secret admin password
+// This is DIFFERENT from GSTEdge2024  -  keep it private
+const ADMIN_CODE = 'GSTEdgeAdmin2024';
+
+// ── SUPABASE CONNECTION ───────────────────────────────────────────
+// Replace with your actual values from Supabase → Settings → API
+const SUPABASE_URL = 'https://sshjtxlnjxhrjbfrkimb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E';
+
+let _sb = null;
+function getSB() {
+  if (_sb) return _sb;
+  try { _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+  return _sb;
+}
+
+// Save subscription to Supabase (called when issuing a new code)
+async function sbSaveSub(sub) {
+  const sb = getSB();
+  if (!sb) { console.warn('Supabase not connected'); return false; }
+  const { error } = await sb.from('subscriptions').upsert({
+    code:       sub.code.toUpperCase(),
+    firm:       sub.firm,
+    caname:     sub.caname,
+    email:      sub.email,
+    phone:      sub.phone,
+    plan:       sub.plan,
+    billing:    sub.billing,
+    amount:     sub.amount,
+    payref:     sub.payref,
+    start_date: sub.start,
+    expiry:     sub.expiry,
+    active:     sub.active
+  }, { onConflict: 'code' });
+  if (error) { console.error('Supabase save error:', error); return false; }
+  return true;
+}
+
+// Update a subscription field in Supabase
+async function sbUpdateSub(code, updates) {
+  const sb = getSB();
+  if (!sb) return false;
+  const { error } = await sb.from('subscriptions').update(updates).eq('code', code.toUpperCase());
+  return !error;
+}
+
+// Save lead to Supabase
+async function sbSaveLead(lead) {
+  const sb = getSB();
+  if (!sb) return false;
+  const { error } = await sb.from('leads').insert({
+    name: lead.name, email: lead.email, firm: lead.firm,
+    phone: lead.phone, city: lead.city, type: lead.type,
+    source: lead.source, plan: lead.plan, notes: lead.notes, status: 'new'
+  });
+  return !error;
+}
+
+function checkAdmin() {
+  var pw  = (document.getElementById('admin-pw').value || '').trim();
+  var err = document.getElementById('admin-err');
+
+  // Check stored custom password
+  var storedPw = '';
+  try { storedPw = localStorage.getItem('admin_custom_pw') || ''; } catch(e) {}
+  var validPw = storedPw || ADMIN_CODE;
+
+  if (pw === validPw) {
+    try { sessionStorage.setItem('admin_session','yes'); } catch(e) {}
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display  = 'block';
+    logActivity('Admin Login', 'Owner', 'Logged in at ' + new Date().toLocaleTimeString('en-IN'));
+    initAdmin();
+    startClock();
+  } else {
+    err.textContent = 'Incorrect admin password';
+    err.style.display = 'block';
+    document.getElementById('admin-pw').value = '';
+  }
+}
+
+document.getElementById('admin-pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkAdmin();
+});
+
+function adminLogout() {
+  try { sessionStorage.removeItem('admin_session'); } catch(e) {}
+  document.getElementById('app').style.display  = 'none';
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('admin-pw').value = '';
+}
+
+// Auto-login if session exists
+(function() {
+  try {
+    if (sessionStorage.getItem('admin_session') === 'yes') {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display  = 'block';
+      initAdmin(); startClock();
+    } else {
+      setTimeout(function() { document.getElementById('admin-pw').focus(); }, 200);
+    }
+  } catch(e) {}
+})();
+
+// ============================================================
+// DATA STORE
+// ============================================================
+function loadLeads()     { try { return JSON.parse(localStorage.getItem('admin_leads')    ||'[]'); } catch(e){ return []; } }
+function saveLeads(d)    { try { localStorage.setItem('admin_leads',    JSON.stringify(d)); } catch(e){} }
+function loadCustomers() { try { return JSON.parse(localStorage.getItem('admin_customers')||'[]'); } catch(e){ return []; } }
+function saveCustomers(d){ try { localStorage.setItem('admin_customers',JSON.stringify(d)); } catch(e){} }
+function loadActivity()  { try { return JSON.parse(localStorage.getItem('admin_activity') ||'[]'); } catch(e){ return []; } }
+function saveActivity(d) { try { localStorage.setItem('admin_activity', JSON.stringify(d)); } catch(e){} }
+
+function logActivity(action, name, detail) {
+  var log = loadActivity();
+  log.unshift({ ts: new Date().toLocaleString('en-IN'), action: action, name: name, detail: detail });
+  if (log.length > 200) log = log.slice(0, 200);
+  saveActivity(log);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function initAdmin() {
+  // Increment visit counter
+  try {
+    var visits = parseInt(localStorage.getItem('admin_visits')||'0') + 1;
+    localStorage.setItem('admin_visits', visits);
+  } catch(e) {}
+
+  // Load also any leads submitted from the landing page contact forms
+  ingestLandingLeads();
+
+  renderLeads();
+  renderCustomers();
+  renderActivity();
+  renderSources();
+  renderSessionNote();
+  checkExpiryAlerts();
+}
+
+// Pull leads that were saved by the landing page contact forms
+function ingestLandingLeads() {
+  try {
+    var pending = JSON.parse(localStorage.getItem('gstedge_leads_pending') || '[]');
+    if (!pending.length) return;
+    var leads = loadLeads();
+    pending.forEach(function(p) {
+      // Avoid duplicates
+      var exists = leads.find(function(l) { return l.email === p.email && l.date === p.date; });
+      if (!exists) {
+        leads.push(p);
+        logActivity('New Lead (Form)', p.name, p.type + ' from ' + (p.source || 'Website'));
+      }
+    });
+    saveLeads(leads);
+    localStorage.removeItem('gstedge_leads_pending');
+  } catch(e) {}
+}
+
+// ============================================================
+// LEADS
+// ============================================================
+function renderLeads() {
+  var leads  = loadLeads();
+  var typeF  = document.getElementById('lead-filter').value;
+  var statF  = document.getElementById('status-filter').value;
+  var now    = new Date();
+  var thisM  = now.getMonth() + '-' + now.getFullYear();
+
+  var filtered = leads.filter(function(l) {
+    return (typeF === 'all' || l.type === typeF) && (statF === 'all' || (l.status||'new') === statF);
+  });
+
+  // Metrics
+  var total     = leads.length;
+  var demos     = leads.filter(function(l){ return l.type==='demo'; }).length;
+  var access    = leads.filter(function(l){ return l.type==='access'; }).length;
+  var queries   = leads.filter(function(l){ return l.type==='query'; }).length;
+  var thisMonth = leads.filter(function(l){
+    if (!l.date) return false;
+    var d = new Date(l.date);
+    return d.getMonth()+'-'+d.getFullYear() === thisM;
+  }).length;
+  var followup  = leads.filter(function(l){ return (l.status||'new') === 'new'; }).length;
+
+  set('m-total',    total);
+  set('m-demo',     demos);
+  set('m-access',   access);
+  set('m-query',    queries);
+  set('m-thismonth',thisMonth);
+  set('m-followup', followup);
+  set('leads-count-sub', filtered.length + ' of ' + total + ' leads shown');
+
+  var tbody = document.getElementById('leads-tbody');
+  var empty = document.getElementById('leads-empty');
+
+  if (!leads.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  var typeLabels  = { demo:'Demo Req', access:'Access Req', query:'GST Query' };
+  var typePills   = { demo:'pill-blue', access:'pill-green', query:'pill-purple' };
+  var statusPills = { new:'pill-amber', contacted:'pill-blue', converted:'pill-green', lost:'pill-gray' };
+
+  tbody.innerHTML = filtered.map(function(l, i) {
+    var origIdx = leads.indexOf(l);
+    var sp = statusPills[l.status||'new'] || 'pill-gray';
+    var tp = typePills[l.type] || 'pill-gray';
+    return '<tr>' +
+      '<td class="mono">' + (i+1) + '</td>' +
+      '<td style="font-size:11px;color:var(--ink3)">' + (l.date ? new Date(l.date).toLocaleDateString('en-IN') : ' - ') + '</td>' +
+      '<td style="font-weight:500">' + esc(l.name||' - ') + '</td>' +
+      '<td class="mono">' + esc(l.email||' - ') + '</td>' +
+      '<td style="font-size:12px">' + esc(l.firm||' - ') + '</td>' +
+      '<td><span class="pill ' + tp + '">' + (typeLabels[l.type]||l.type||' - ') + '</span></td>' +
+      '<td style="font-size:11px;color:var(--ink3)">' + esc(l.source||' - ') + '</td>' +
+      '<td style="font-size:11px">' + esc(l.city||' - ') + '</td>' +
+      '<td style="font-size:11px;color:var(--ink3)">' + esc(l.plan||' - ') + '</td>' +
+      '<td><select onchange="updateLeadStatus(' + origIdx + ',this.value)" style="font-size:11px;border:1px solid var(--border);border-radius:5px;padding:3px 6px;font-family:var(--sans)">' +
+        ['new','contacted','converted','lost'].map(function(s){ return '<option value="'+s+'"'+(s===(l.status||'new')?' selected':'')+'>'+s.charAt(0).toUpperCase()+s.slice(1)+'</option>'; }).join('') +
+      '</select></td>' +
+      '<td style="font-size:11px;color:var(--ink3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(l.notes||'') + '">' + esc(l.notes||' - ') + '</td>' +
+      '<td>' +
+        '<div style="display:flex;gap:4px">' +
+          '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="convertToCustomer(' + origIdx + ')">→ Customer</button>' +
+          '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;color:var(--red)" onclick="deleteLead(' + origIdx + ')">✕</button>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function updateLeadStatus(idx, status) {
+  var leads = loadLeads();
+  if (!leads[idx]) return;
+  var name = leads[idx].name;
+  leads[idx].status = status;
+  saveLeads(leads);
+  logActivity('Status Updated', name, 'Changed to: ' + status);
+  renderLeads();
+  renderSources();
+  showToast('OK ' + name + ' → ' + status);
+}
+
+function deleteLead(idx) {
+  if (!confirm('Delete this lead?')) return;
+  var leads = loadLeads();
+  var name  = leads[idx]?.name || 'Lead';
+  leads.splice(idx, 1);
+  saveLeads(leads);
+  logActivity('Lead Deleted', name, 'Removed from register');
+  renderLeads(); renderSources();
+  showToast('Lead deleted');
+}
+
+function convertToCustomer(idx) {
+  var leads  = loadLeads();
+  var lead   = leads[idx];
+  if (!lead) return;
+  leads[idx].status = 'converted';
+  saveLeads(leads);
+
+  // Pre-fill customer modal
+  document.getElementById('c-name').value   = lead.name  || '';
+  document.getElementById('c-firm').value   = lead.firm  || '';
+  document.getElementById('c-email').value  = lead.email || '';
+  document.getElementById('c-start').value  = new Date().toISOString().split('T')[0];
+  // Set renewal to 1 year from today
+  var renewal = new Date(); renewal.setFullYear(renewal.getFullYear()+1);
+  document.getElementById('c-renew').value  = renewal.toISOString().split('T')[0];
+  document.getElementById('c-amount').value = '';
+
+  logActivity('Lead Converted', lead.name, 'Moved to customer stage');
+  openAddCustomer();
+  renderLeads();
+}
+
+function openAddLead() {
+  ['l-name','l-email','l-firm','l-phone','l-city','l-notes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('modal-lead').style.display = 'flex';
+}
+
+function saveLead() {
+  var name  = (document.getElementById('l-name').value||'').trim();
+  var email = (document.getElementById('l-email').value||'').trim();
+  if (!name)  { showToast('WARNING Enter lead name'); return; }
+  if (!email) { showToast('WARNING Enter email'); return; }
+
+  var leads = loadLeads();
+  var lead  = {
+    id:     Date.now().toString(),
+    date:   new Date().toISOString(),
+    name,   email,
+    firm:   (document.getElementById('l-firm').value||'').trim(),
+    phone:  (document.getElementById('l-phone').value||'').trim(),
+    city:   (document.getElementById('l-city').value||'').trim(),
+    type:   document.getElementById('l-type').value,
+    source: document.getElementById('l-source').value,
+    plan:   document.getElementById('l-plan').value,
+    notes:  (document.getElementById('l-notes').value||'').trim(),
+    status: 'new'
+  };
+  leads.push(lead);
+  saveLeads(leads);
+  logActivity('Lead Added (Manual)', name, lead.type + ' from ' + (lead.source||'manual'));
+  closeModal(); renderLeads(); renderSources();
+  showToast('OK Lead added  -  ' + name);
+}
+
+// ============================================================
+// CUSTOMERS
+// ============================================================
+function renderCustomers() {
+  var customers = loadCustomers();
+  var now = new Date();
+  var in60 = new Date(); in60.setDate(in60.getDate()+60);
+
+  var active  = customers.filter(function(c){ return (c.status||'active')==='active'; });
+  var mrr     = active.reduce(function(a,c){ return a + (c.billing==='monthly' ? (parseFloat(c.amount)||0) : Math.round((parseFloat(c.amount)||0)/12)); }, 0);
+  var arr     = active.reduce(function(a,c){ return a + (c.billing==='annual'  ? (parseFloat(c.amount)||0) : (parseFloat(c.amount)||0)*12); }, 0);
+  var renewals = active.filter(function(c){ if(!c.renewDate) return false; var d=new Date(c.renewDate); return d>=now && d<=in60; }).length;
+  var avgDeal  = active.length ? Math.round(arr/active.length) : 0;
+  var churned  = customers.filter(function(c){ return c.status==='cancelled'; }).length;
+
+  set('c-active', active.length);
+  set('c-mrr',    fmtRs(mrr));
+  set('c-arr',    fmtRs(arr));
+  set('c-renew',  renewals);
+  set('c-avg',    fmtRs(avgDeal));
+  set('c-churn',  churned);
+
+  var tbody = document.getElementById('customers-tbody');
+  var empty = document.getElementById('customers-empty');
+
+  if (!customers.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  tbody.innerHTML = customers.map(function(c, i) {
+    var renewSoon = c.renewDate && new Date(c.renewDate) <= in60;
+    var st = (c.status||'active')==='active'
+      ? '<span class="pill pill-green">Active</span>'
+      : '<span class="pill pill-gray">Cancelled</span>';
+    return '<tr>' +
+      '<td class="mono">' + (i+1) + '</td>' +
+      '<td style="font-weight:500">' + esc(c.firm||' - ') + '</td>' +
+      '<td>' + esc(c.name||' - ') + '</td>' +
+      '<td class="mono">' + esc(c.email||' - ') + '</td>' +
+      '<td style="font-size:11px">' + esc(c.plan||' - ') + '</td>' +
+      '<td><span class="pill ' + (c.billing==='annual'?'pill-green':'pill-blue') + '">' + (c.billing||'annual') + '</span></td>' +
+      '<td class="mono" style="font-weight:600">Rs.' + parseInt(c.amount||0).toLocaleString('en-IN') + '</td>' +
+      '<td style="font-size:11px;color:var(--ink3)">' + (c.startDate ? new Date(c.startDate).toLocaleDateString('en-IN') : ' - ') + '</td>' +
+      '<td style="font-size:11px;color:' + (renewSoon?'var(--amber)':'var(--ink3)') + '">' + (c.renewDate ? new Date(c.renewDate).toLocaleDateString('en-IN') : ' - ') + (renewSoon?' WARNING':'') + '</td>' +
+      '<td>' + st + '</td>' +
+      '<td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;color:var(--red)" onclick="deleteCustomer(' + i + ')">✕</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function openAddCustomer() { document.getElementById('modal-customer').style.display='flex'; }
+
+function saveCustomer() {
+  var firm = (document.getElementById('c-firm').value||'').trim();
+  var name = (document.getElementById('c-name').value||'').trim();
+  if (!firm) { showToast('WARNING Enter firm name'); return; }
+
+  var customers = loadCustomers();
+  customers.push({
+    id:        Date.now().toString(),
+    firm, name,
+    email:     (document.getElementById('c-email').value||'').trim(),
+    plan:      document.getElementById('c-plan').value,
+    billing:   document.getElementById('c-billing').value,
+    amount:    document.getElementById('c-amount').value,
+    startDate: document.getElementById('c-start').value,
+    renewDate: document.getElementById('c-renew').value,
+    status:    'active'
+  });
+  saveCustomers(customers);
+  logActivity('Customer Added', firm, name + '  -  ' + document.getElementById('c-plan').value);
+  closeModal(); renderCustomers();
+  showToast('OK Customer added  -  ' + firm);
+}
+
+function deleteCustomer(idx) {
+  if (!confirm('Remove this customer?')) return;
+  var c = loadCustomers(); var name = c[idx]?.firm||'Customer';
+  c.splice(idx,1); saveCustomers(c); renderCustomers();
+  logActivity('Customer Removed', name, 'Deleted from register');
+  showToast('Customer removed');
+}
+
+// ============================================================
+// SOURCES & CHARTS
+// ============================================================
+function renderSources() {
+  var leads     = loadLeads();
+  var customers = loadCustomers();
+  var visits    = 0;
+  try { visits = parseInt(localStorage.getItem('admin_visits')||'0'); } catch(e) {}
+
+  var converted = leads.filter(function(l){ return l.status==='converted'; }).length;
+  var convRate  = leads.length ? Math.round(converted/leads.length*100) : 0;
+  var lost      = leads.filter(function(l){ return l.status==='lost'; }).length;
+
+  // Top source
+  var sourceCounts = {};
+  leads.forEach(function(l){ if(l.source){ sourceCounts[l.source]=(sourceCounts[l.source]||0)+1; } });
+  var topSource = Object.keys(sourceCounts).sort(function(a,b){ return sourceCounts[b]-sourceCounts[a]; })[0] || ' - ';
+
+  // States
+  var cities = {};
+  leads.forEach(function(l){ if(l.city){ var state=l.city.split(',').pop().trim(); cities[state]=(cities[state]||0)+1; } });
+
+  set('s-visits',  visits);
+  set('s-topsource', topSource);
+  set('s-states',  Object.keys(cities).length);
+  set('s-conv',    convRate + '%');
+  set('s-lost',    lost);
+
+  // Charts
+  renderBarChart('source-chart', sourceCounts, '#1A56DB');
+  renderBarChart('state-chart',  cities,       '#0C7C4B');
+
+  var planCounts = {};
+  leads.forEach(function(l){ if(l.plan){ planCounts[l.plan]=(planCounts[l.plan]||0)+1; } });
+  renderBarChart('plan-chart', planCounts, '#C9A84C');
+
+  // Monthly trend
+  var monthCounts = {};
+  var MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  leads.forEach(function(l) {
+    if (!l.date) return;
+    var d = new Date(l.date);
+    var key = MN[d.getMonth()] + ' ' + d.getFullYear();
+    monthCounts[key] = (monthCounts[key]||0) + 1;
+  });
+  renderBarChart('trend-chart', monthCounts, '#6C3FC5');
+}
+
+function renderBarChart(containerId, data, color) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var entries = Object.entries(data).sort(function(a,b){ return b[1]-a[1]; }).slice(0,8);
+  if (!entries.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">No data yet</div>';
+    return;
+  }
+  var max = Math.max.apply(null, entries.map(function(e){ return e[1]; }));
+  el.innerHTML = entries.map(function(e) {
+    var pct = Math.round(e[1]/max*100);
+    var label = e[0].length > 20 ? e[0].slice(0,18)+'…' : e[0];
+    return '<div class="bar-row">' +
+      '<div class="bar-label" title="'+esc(e[0])+'">'+esc(label)+'</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'">'+e[1]+'</div></div>' +
+      '<div class="bar-count">'+e[1]+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ============================================================
+// ACTIVITY
+// ============================================================
+function renderActivity() {
+  var log   = loadActivity();
+  var tbody = document.getElementById('activity-tbody');
+  var empty = document.getElementById('activity-empty');
+  if (!log.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML = log.slice(0,50).map(function(e) {
+    return '<tr><td class="mono" style="color:var(--ink3);white-space:nowrap">'+esc(e.ts)+'</td><td style="font-weight:500">'+esc(e.action)+'</td><td>'+esc(e.name)+'</td><td style="font-size:12px;color:var(--ink3)">'+esc(e.detail)+'</td></tr>';
+  }).join('');
+}
+
+function clearActivityLog() {
+  if (!confirm('Clear all activity logs?')) return;
+  saveActivity([]);
+  renderActivity();
+  showToast('Activity log cleared');
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function exportLeadsExcel() {
+  var leads = loadLeads();
+  if (!leads.length) { showToast('WARNING No leads to export'); return; }
+  var wb  = XLSX.utils.book_new();
+  var hdr = ['#','Date','Name','Email','Firm','Mobile','City','Type','Source','Plan Interest','Status','Notes'];
+  var rows = leads.map(function(l, i) {
+    return [i+1, l.date?new Date(l.date).toLocaleDateString('en-IN'):'',
+      l.name||'', l.email||'', l.firm||'', l.phone||'', l.city||'',
+      l.type||'', l.source||'', l.plan||'', l.status||'new', l.notes||''];
+  });
+  var ws = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI  -  Lead Register'],
+    ['Generated: ' + new Date().toLocaleString('en-IN')],
+    [], hdr].concat(rows));
+  ws['!cols'] = [4,12,20,24,20,14,16,12,16,24,12,24].map(function(w){ return {wch:w}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Leads');
+  XLSX.writeFile(wb, 'GSTEdge_Leads_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('OK Lead register exported');
+}
+
+function exportCustomersExcel() {
+  var customers = loadCustomers();
+  if (!customers.length) { showToast('WARNING No customers to export'); return; }
+  var wb  = XLSX.utils.book_new();
+  var hdr = ['#','Firm Name','CA Name','Email','Plan','Billing','Amount (Rs.)','Start Date','Renewal Date','Status'];
+  var rows = customers.map(function(c, i) {
+    return [i+1, c.firm||'', c.name||'', c.email||'', c.plan||'', c.billing||'',
+      c.amount||0,
+      c.startDate?new Date(c.startDate).toLocaleDateString('en-IN'):'',
+      c.renewDate?new Date(c.renewDate).toLocaleDateString('en-IN'):'',
+      c.status||'active'];
+  });
+  var ws = XLSX.utils.aoa_to_sheet([['GSTEdge AI  -  Customer Register'],[],hdr].concat(rows));
+  ws['!cols'] = [4,24,20,24,24,10,14,14,14,12].map(function(w){ return {wch:w}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+  XLSX.writeFile(wb, 'GSTEdge_Customers_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('OK Customer register exported');
+}
+
+function exportAllExcel() {
+  exportLeadsExcel();
+  setTimeout(exportCustomersExcel, 500);
+}
+
+function backupToClipboard() {
+  var backup = {
+    leads:     loadLeads(),
+    customers: loadCustomers(),
+    activity:  loadActivity(),
+    ts:        new Date().toISOString()
+  };
+  navigator.clipboard.writeText(JSON.stringify(backup, null, 2))
+    .then(function(){ showToast('OK Backup copied to clipboard  -  paste into a text file to save'); })
+    .catch(function(){ showToast('WARNING Could not copy  -  use Export Excel instead'); });
+}
+
+function clearAllData() {
+  if (!confirm('Delete ALL leads, customers and activity logs? This cannot be undone.')) return;
+  if (!confirm('Are you absolutely sure? All data will be permanently deleted.')) return;
+  ['admin_leads','admin_customers','admin_activity'].forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+  initAdmin();
+  showToast('All admin data cleared');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function changeAdminPw() {
+  var cur = (document.getElementById('s-cur-pw').value||'').trim();
+  var nw  = (document.getElementById('s-new-pw').value||'').trim();
+  var storedPw = localStorage.getItem('admin_custom_pw') || ADMIN_CODE;
+  if (cur !== storedPw) { showToast('WARNING Current password incorrect'); return; }
+  if (nw.length < 6)    { showToast('WARNING New password must be at least 6 characters'); return; }
+  localStorage.setItem('admin_custom_pw', nw);
+  document.getElementById('s-cur-pw').value = '';
+  document.getElementById('s-new-pw').value = '';
+  showToast('OK Admin password updated');
+}
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+function showAdminTab(id) {
+  ['leads','subscriptions','sources','activity','customers','settings'].forEach(function(t) {
+    var el  = document.getElementById('tab-'+t);
+    var tab = document.querySelectorAll('.tab')[['leads','subscriptions','sources','activity','customers','settings'].indexOf(t)];
+    if (el)  el.style.display = t===id ? 'block' : 'none';
+    if (tab) tab.classList.toggle('active', t===id);
+  });
+  if (id==='subscriptions') renderSubs();
+  if (id==='sources')   renderSources();
+  if (id==='activity')  renderActivity();
+  if (id==='customers') renderCustomers();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function set(id, val) { var el=document.getElementById(id); if(el) el.textContent=val; }
+function esc(s) {
+  return String(s||'')
+    .replace(/&/g, '&' + 'amp;')
+    .replace(/</g, '&' + 'lt;')
+    .replace(/>/g, '&' + 'gt;')
+    .replace(/\x22/g, '&' + 'quot;')
+    .replace(/\x27/g, '&' + '#39;');
+}
+function fmtRs(n) {
+  n = Math.round(n||0);
+  if (n>=10000000) return 'Rs.'+(n/10000000).toFixed(1)+'Cr';
+  if (n>=100000)   return 'Rs.'+(n/100000).toFixed(1)+'L';
+  return 'Rs.'+n.toLocaleString('en-IN');
+}
+function closeModal() {
+  document.querySelectorAll('[id^="modal-"]').forEach(function(m){ m.style.display='none'; });
+}
+document.addEventListener('click', function(e){ if(e.target.id && e.target.id.startsWith('modal-')) closeModal(); });
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast show';
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.className='toast'; }, 3500);
+}
+
+function startClock() {
+  function tick() {
+    var el = document.getElementById('clock');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) + ' IST';
+  }
+  tick(); setInterval(tick, 30000);
+}
+
+function renderSessionNote() {
+  var el = document.getElementById('tb-session-note');
+  if (el) el.textContent = 'Data: this browser only - Phase 2 = all devices';
+}
+
+// ============================================================
+// SUBSCRIPTION ENGINE  -  Admin side
+// ============================================================
+function getSubs() { try{ return JSON.parse(localStorage.getItem('gstedge_subscriptions')||'{}'); }catch(e){ return {}; } }
+function saveSubs(d){ try{ localStorage.setItem('gstedge_subscriptions', JSON.stringify(d)); }catch(e){} }
+
+function renderSubs() {
+  var subs    = getSubs();
+  var today   = new Date(); today.setHours(0,0,0,0);
+  var in30    = new Date(today); in30.setDate(in30.getDate()+30);
+  var in7     = new Date(today); in7.setDate(in7.getDate()+7);
+  var entries = Object.entries(subs);
+
+  var active=0, expired=0, exp30=0, exp7=0, inactive=0;
+  entries.forEach(function(e) {
+    var s = e[1];
+    if (!s.active) { inactive++; return; }
+    var expD = new Date(s.expiry); expD.setHours(0,0,0,0);
+    if (expD < today) { expired++; return; }
+    active++;
+    if (expD <= in30) exp30++;
+    if (expD <= in7)  exp7++;
+  });
+
+  set('sm-active',     active);
+  set('sm-expired',    expired);
+  set('sm-expiring30', exp30);
+  set('sm-expiring7',  exp7);
+  set('sm-inactive',   inactive);
+  set('sm-total',      entries.length);
+
+  // Store codes in window array so inline onclick can reference safely
+  window._subcodes = entries.map(function(e){ return e[0]; });
+
+  // Build renewal alerts
+  var alertsEl = document.getElementById('renewal-alerts');
+  var alertsHtml = '';
+  entries.forEach(function(e, idx) {
+    var s = e[1]; if (!s.active) return;
+    var expD = new Date(s.expiry); expD.setHours(0,0,0,0);
+    var dLeft = Math.round((expD - today) / 86400000);
+    var btnR = '<button onclick="renewSub(window._subcodes['+idx+'])" style="margin-left:4px;background:var(--green);color:#fff;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:12px">Renew</button>';
+    var btnE = '<button onclick="sendRenewalEmail(window._subcodes['+idx+'])" style="margin-left:8px;background:var(--red);color:#fff;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:12px">Email</button>';
+    if (dLeft < 0) {
+      alertsHtml += '<div class="notice" style="background:var(--red-pale);border-color:rgba(192,57,43,.2);color:var(--red);margin-bottom:8px">'
+        + '<strong>EXPIRED - ' + esc(s.firm) + ':</strong> Expired ' + Math.abs(dLeft) + ' days ago (' + expD.toLocaleDateString('en-IN') + '). Follow up to renew.' + btnE + btnR + '</div>';
+    } else if (dLeft <= 7) {
+      alertsHtml += '<div class="notice" style="background:var(--red-pale);border-color:rgba(192,57,43,.15);color:var(--red);margin-bottom:8px">'
+        + '<strong>URGENT - ' + esc(s.firm) + ':</strong> Expires in ' + dLeft + ' days (' + expD.toLocaleDateString('en-IN') + '). Call today.' + btnE + btnR + '</div>';
+    } else if (dLeft <= 30) {
+      alertsHtml += '<div class="notice" style="background:var(--amber-pale);border-color:rgba(180,83,9,.15);color:var(--amber);margin-bottom:8px">'
+        + '<strong>' + esc(s.firm) + ':</strong> Expires in ' + dLeft + ' days (' + expD.toLocaleDateString('en-IN') + '). Start renewal conversation.' + btnE + btnR + '</div>';
+    }
+  });
+  if (alertsEl) alertsEl.innerHTML = alertsHtml;
+
+  // Build table rows
+  var tbody = document.getElementById('subs-tbody');
+  var empty  = document.getElementById('subs-empty');
+  if (!entries.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  tbody.innerHTML = entries.map(function(e, idx) {
+    var code = e[0]; var s = e[1];
+    var expD  = new Date(s.expiry); expD.setHours(0,0,0,0);
+    var dLeft = Math.round((expD - today) / 86400000);
+    var isExp = dLeft < 0;
+    var statusPill, rowBg='';
+    if (!s.active)      { statusPill='<span class="pill pill-gray">Inactive</span>'; }
+    else if (isExp)     { statusPill='<span class="pill pill-red">Expired</span>';    rowBg='background:rgba(192,57,43,.04)'; }
+    else if (dLeft<=7)  { statusPill='<span class="pill pill-red">'+dLeft+'d left</span>'; rowBg='background:rgba(192,57,43,.04)'; }
+    else if (dLeft<=30) { statusPill='<span class="pill pill-amber">'+dLeft+'d left</span>'; rowBg='background:rgba(180,83,9,.04)'; }
+    else                { statusPill='<span class="pill pill-green">Active</span>'; }
+
+    var dDisplay = isExp
+      ? '<span style="color:var(--red);font-weight:600">'+Math.abs(dLeft)+'d ago</span>'
+      : dLeft<=30
+        ? '<span style="color:var(--amber);font-weight:600">'+dLeft+' days</span>'
+        : '<span style="color:var(--green)">'+dLeft+' days</span>';
+
+    var actBtns = (s.active && !isExp ? '' : '<button class="btn btn-green" style="padding:3px 8px;font-size:11px" onclick="renewSub(window._subcodes['+idx+'])">Renew</button>')
+      + (s.active
+          ? '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;color:var(--amber)" onclick="deactivateSub(window._subcodes['+idx+'])">Pause</button>'
+          : '<button class="btn btn-green" style="padding:3px 8px;font-size:11px" onclick="reactivateSub(window._subcodes['+idx+'])">Activate</button>')
+      + '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="extendSub(window._subcodes['+idx+'])">Extend</button>'
+      + '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="sendRenewalEmail(window._subcodes['+idx+'])">Email</button>'
+      + '<button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;color:var(--red)" onclick="deleteSub(window._subcodes['+idx+'])">X</button>';
+
+    return '<tr style="'+rowBg+'">'
+      + '<td class="mono" style="color:var(--ink3)">'+(idx+1)+'</td>'
+      + '<td style="font-weight:600">'+esc(s.firm||'-')+'</td>'
+      + '<td>'+esc(s.caname||'-')+'</td>'
+      + '<td><div style="display:flex;align-items:center;gap:6px">'
+      +   '<code style="font-family:var(--mono);font-size:12px;background:var(--surface);padding:3px 8px;border-radius:5px;letter-spacing:.08em">'+esc(code)+'</code>'
+      +   '<button onclick="copyCode(window._subcodes['+idx+'])" title="Copy code" style="background:transparent;border:1px solid var(--border);border-radius:5px;padding:2px 7px;cursor:pointer;font-size:11px">Copy</button>'
+      + '</div></td>'
+      + '<td style="font-size:11px;color:var(--ink3)">'+esc(s.plan||'-')+'</td>'
+      + '<td><span class="pill '+(s.billing==='annual'?'pill-green':'pill-blue')+'">'+(s.billing||'annual')+'</span></td>'
+      + '<td class="mono">Rs.'+parseInt(s.amount||0).toLocaleString('en-IN')+'</td>'
+      + '<td class="mono" style="font-size:11px;color:var(--ink3)">'+(s.start?new Date(s.start).toLocaleDateString('en-IN'):'-')+'</td>'
+      + '<td class="mono" style="font-size:11px;font-weight:500">'+expD.toLocaleDateString('en-IN')+'</td>'
+      + '<td>'+dDisplay+'</td>'
+      + '<td>'+statusPill+'</td>'
+      + '<td><div style="display:flex;gap:4px;flex-wrap:wrap">'+actBtns+'</div></td>'
+    + '</tr>';
+  }).join('');
+}
+
+function openAddSub() {
+  ['sub-firm','sub-caname','sub-email','sub-phone','sub-amount','sub-payref','sub-code'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('sub-start').value  = new Date().toISOString().split('T')[0];
+  document.getElementById('sub-billing').value = 'annual';
+  updateSubExpiry();
+  generateCode();
+  document.getElementById('sub-modal-title').textContent = 'Issue New Access Code';
+  document.getElementById('modal-sub').style.display = 'flex';
+}
+
+function updateSubExpiry() {
+  var start   = document.getElementById('sub-start').value;
+  var billing = document.getElementById('sub-billing').value;
+  if (!start) return;
+  var exp = new Date(start);
+  if (billing === 'annual')  exp.setFullYear(exp.getFullYear()+1);
+  else                       exp.setMonth(exp.getMonth()+1);
+  exp.setDate(exp.getDate()-1); // day before next period
+  document.getElementById('sub-expiry').value = exp.toISOString().split('T')[0];
+}
+
+function generateCode() {
+  var firm = (document.getElementById('sub-firm').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+  var rand = Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+  var year = new Date().getFullYear().toString().slice(-2);
+  var code = (firm || 'GST') + rand + year;
+  document.getElementById('sub-code').value = code;
+}
+
+function issueSub() {
+  var firm    = (document.getElementById('sub-firm').value||'').trim();
+  var caname  = (document.getElementById('sub-caname').value||'').trim();
+  var code    = (document.getElementById('sub-code').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var amount  = document.getElementById('sub-amount').value;
+  var start   = document.getElementById('sub-start').value;
+  var expiry  = document.getElementById('sub-expiry').value;
+  var plan    = document.getElementById('sub-plan').value;
+  var billing = document.getElementById('sub-billing').value;
+
+  if (!firm)   { showToast('WARNING Enter firm name'); return; }
+  if (!code || code.length < 6) { showToast('WARNING Access code must be at least 6 characters'); return; }
+  if (!start || !expiry)  { showToast('WARNING Enter start and expiry dates'); return; }
+  if (!amount || parseFloat(amount)<=0) { showToast('WARNING Enter amount paid'); return; }
+
+  var subs = getSubs();
+  if (subs[code]) { showToast('Code "'+code+'" already exists. Use a different code.'); return; }
+
+  var subData = {
+    firm: firm, caname: caname, plan: plan, billing: billing, active: true,
+    email:  (document.getElementById('sub-email').value||'').trim(),
+    phone:  (document.getElementById('sub-phone').value||'').trim(),
+    amount: parseFloat(amount),
+    payref: (document.getElementById('sub-payref').value||'').trim(),
+    start: start, expiry: expiry,
+    issuedOn: new Date().toISOString()
+  };
+
+  // Save to localStorage for admin panel display
+  subs[code] = subData;
+  saveSubs(subs);
+
+  // Save to Supabase so client can validate from ANY device/browser
+  sbSaveSub(Object.assign({ code: code }, subData)).then(function(ok) {
+    if (ok) {
+      showToast('Code saved to Supabase — client can log in from any device');
+    } else {
+      showToast('Supabase save failed — check URL/KEY in the file. Client cannot log in yet.');
+    }
+  });
+
+  saveSubs(subs);
+  logActivity('Code Issued', firm, 'Code: '+code+' - Plan: '+plan+' - Expiry: '+new Date(expiry).toLocaleDateString('en-IN'));
+  closeModal();
+  renderSubs();
+
+  // Show the code to WhatsApp to client
+  setTimeout(function() {
+    var msg = 'Code issued for ' + firm + '\n\n'
+      + 'ACCESS CODE (WhatsApp this to client):\n\n'
+      + code + '\n\n'
+      + 'Valid until: ' + new Date(expiry).toLocaleDateString('en-IN') + '\n\n'
+      + 'This code is now saved in Supabase — client can use it from any device immediately.';
+    alert(msg);
+
+  }, 300);
+
+  showToast('OK Code issued for ' + firm + ': ' + code);
+}
+
+function deactivateSub(code) {
+  if (!confirm('Pause access for this code? The client will not be able to log in until reactivated.')) return;
+  var subs = getSubs();
+  if (!subs[code]) return;
+  subs[code].active = false;
+  saveSubs(subs);
+  sbUpdateSub(code, { active: false });
+  logActivity('Code Deactivated', subs[code].firm, 'Code: '+code);
+  renderSubs();
+  showToast('Code paused  -  client access revoked');
+}
+
+function reactivateSub(code) {
+  var subs = getSubs();
+  if (!subs[code]) return;
+  subs[code].active = true;
+  saveSubs(subs);
+  logActivity('Code Reactivated', subs[code].firm, 'Code: '+code);
+  renderSubs();
+  showToast('OK Code reactivated  -  client can log in again');
+}
+
+function renewSub(code) {
+  var subs = getSubs();
+  if (!subs[code]) return;
+  var s = subs[code];
+  var newExpiry = prompt('New expiry date (YYYY-MM-DD):', function() {
+    var d = new Date(s.expiry);
+    d.setFullYear(d.getFullYear()+1);
+    return d.toISOString().split('T')[0];
+  }());
+  if (!newExpiry) return;
+  var today = new Date(s.expiry); today.setHours(0,0,0,0);
+  var newDate = new Date(newExpiry); newDate.setHours(0,0,0,0);
+  if (isNaN(newDate.getTime())) { showToast('WARNING Invalid date format'); return; }
+  var amount = prompt('Payment amount received (Rs.):', s.amount || '30000');
+  if (!amount) return;
+  subs[code].expiry = newExpiry;
+  subs[code].active = true;
+  subs[code].lastRenewed = new Date().toISOString();
+  subs[code].renewedAmount = parseFloat(amount);
+  saveSubs(subs);
+  // Sync to Supabase
+  sbUpdateSub(code, { expiry: newExpiry, active: true, last_renewed: new Date().toISOString() });
+  logActivity('Subscription Renewed', s.firm, 'New expiry: '+new Date(newExpiry).toLocaleDateString('en-IN')+' - Rs.'+amount);
+  renderSubs();
+  showToast('OK Renewed ' + s.firm + '  -  valid till ' + new Date(newExpiry).toLocaleDateString('en-IN'));
+}
+
+function extendSub(code) {
+  var subs = getSubs(); var s = subs[code]; if (!s) return;
+  var days = prompt('Extend by how many days?','30');
+  if (!days || isNaN(parseInt(days))) return;
+  var exp = new Date(s.expiry); exp.setDate(exp.getDate() + parseInt(days));
+  subs[code].expiry = exp.toISOString().split('T')[0];
+  saveSubs(subs);
+  logActivity('Subscription Extended', s.firm, '+'+days+' days → '+exp.toLocaleDateString('en-IN'));
+  renderSubs();
+  showToast('OK Extended ' + days + ' days  -  now valid till ' + exp.toLocaleDateString('en-IN'));
+}
+
+function deleteSub(code) {
+  if (!confirm('Permanently delete this subscription? Client will lose access immediately.')) return;
+  var subs = getSubs(); var name = subs[code]?.firm||'Unknown';
+  delete subs[code]; saveSubs(subs);
+  logActivity('Code Deleted', name, 'Code: '+code+' permanently removed');
+  renderSubs();
+  showToast('Subscription deleted');
+}
+
+function copyCode(code) {
+  navigator.clipboard.writeText(code).then(function(){ showToast('OK Code "'+code+'" copied to clipboard'); }).catch(function(){ showToast('Code: '+code+'  -  copy manually'); });
+}
+
+function sendRenewalEmail(code) {
+  var subs = getSubs(); var s = subs[code]; if (!s) return;
+  var exp  = new Date(s.expiry);
+  var nl   = '\n';
+  var bodyText = 'Dear ' + (s.caname||s.firm) + ',' + nl + nl
+    + 'Your GSTEdge AI subscription (' + s.plan + ') '
+    + (exp < new Date() ? 'expired on ' : 'is expiring on ')
+    + exp.toLocaleDateString('en-IN') + '.' + nl + nl
+    + 'To continue uninterrupted access, please renew at the earliest.' + nl + nl
+    + 'Renewal Pricing:' + nl
+    + '* Module 01 - Reconciliation: Rs.30,000/year or Rs.3,000/month' + nl
+    + '* Module 02 - Audit Suite: Rs.54,000/year or Rs.5,000/month' + nl + nl
+    + 'Please reply to this email or WhatsApp us to process renewal.' + nl + nl
+    + 'Best regards,' + nl
+    + 'GSTEdge AI Team' + nl
+    + 'contact@gstedgeai.com';
+  var subj = encodeURIComponent('GSTEdge AI Subscription Renewal - ' + s.firm);
+  var body = encodeURIComponent(bodyText);
+  window.location.href = 'mailto:' + (s.email||'contact@gstedgeai.com') + '?subject=' + subj + '&body=' + body;
+  logActivity('Renewal Email Sent', s.firm, 'To: ' + (s.email||'direct'));
+  showToast('Renewal email opened for ' + s.firm);
+}
+
+function exportSubsExcel() {
+  var subs    = getSubs();
+  var entries = Object.entries(subs);
+  if (!entries.length) { showToast('WARNING No subscriptions to export'); return; }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var wb  = XLSX.utils.book_new();
+  var hdr = ['#','Access Code','Firm Name','CA Name','Email','Mobile','Plan','Billing',
+    'Amount (Rs.)','Payment Ref','Start Date','Expiry Date','Days Left','Status','Last Renewed'];
+  var rows = entries.map(function(e,i) {
+    var code=e[0]; var s=e[1];
+    var exp  = new Date(s.expiry); exp.setHours(0,0,0,0);
+    var days = Math.round((exp-today)/86400000);
+    var status = !s.active ? 'Inactive' : days<0 ? 'Expired' : 'Active';
+    return [i+1,code,s.firm||'',s.caname||'',s.email||'',s.phone||'',
+      s.plan||'',s.billing||'annual',s.amount||0,s.payref||'',
+      s.start?new Date(s.start).toLocaleDateString('en-IN'):'',
+      exp.toLocaleDateString('en-IN'),
+      days<0?'EXPIRED ('+Math.abs(days)+'d ago)':days+'d',
+      status,
+      s.lastRenewed?new Date(s.lastRenewed).toLocaleDateString('en-IN'):' - '];
+  });
+  var ws = XLSX.utils.aoa_to_sheet([
+    ['GSTEdge AI  -  Subscription Registry'],
+    ['Generated: '+new Date().toLocaleString('en-IN')],
+    [], hdr].concat(rows));
+  ws['!cols']=[4,14,22,20,22,14,24,10,12,16,12,12,12,10,14].map(function(w){return{wch:w};});
+  XLSX.utils.book_append_sheet(wb, ws, 'Subscriptions');
+  XLSX.writeFile(wb,'GSTEdge_Subscriptions_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('OK Subscription registry exported');
+}
+
+// Run expiry check on init
+function checkExpiryAlerts() {
+  var subs  = getSubs();
+  var today = new Date(); today.setHours(0,0,0,0);
+  var urgent = [];
+  Object.entries(subs).forEach(function(e) {
+    var s=e[1]; if (!s.active) return;
+    var exp = new Date(s.expiry); exp.setHours(0,0,0,0);
+    var daysLeft = Math.round((exp-today)/86400000);
+    if (daysLeft <= 7) urgent.push({firm:s.firm, days:daysLeft, exp:exp});
+  });
+  if (urgent.length > 0) {
+    var msg = urgent.map(function(u){
+      return u.firm + ': ' + (u.days<0 ? 'EXPIRED' : u.days+'d left');
+    }).join(', ');
+    showToast('WARNING Urgent renewals: ' + msg);
+  }
+}
+
+</script>
+</body>
+</html>
