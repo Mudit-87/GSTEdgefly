@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>GSTEdge Test</title>
+</head>
+<body>
+<h2 id="result">Testing...</h2>
+<pre id="details"></pre>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
+<script>
+var out = document.getElementById('result');
+var det = document.getElementById('details');
+
+// Test 1: JS runs
+out.textContent = 'JS is running OK';
+out.style.color = 'green';
+
+// Test 2: Supabase CDN loaded
+var info = '';
+info += '1. JS running: YES\n';
+info += '2. window.supabase type: ' + typeof window.supabase + '\n';
+
+// Test 3: Supabase query
+if (typeof window.supabase !== 'undefined') {
+  var sb = window.supabase.createClient(
+    'https://sshjtxlnjxhrjbfrkimb.supabase.co',
+    'sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E'
+  );
+  info += '3. Supabase client created: YES\n';
+  det.textContent = info + '4. Querying subscriptions table...\n';
+
+  sb.from('subscriptions').select('code,active,expiry').then(function(r) {
+    if (r.error) {
+      info += '4. Query ERROR: ' + JSON.stringify(r.error) + '\n';
+      out.textContent = 'SUPABASE ERROR — see details';
+      out.style.color = 'red';
+    } else {
+      info += '4. Query SUCCESS: ' + r.data.length + ' rows found\n';
+      info += '5. Codes: ' + r.data.map(function(x){return x.code;}).join(', ') + '\n';
+      out.textContent = 'EVERYTHING WORKS — ' + r.data.length + ' subscriptions found';
+      out.style.color = 'green';
+    }
+    det.textContent = info;
+  });
+} else {
+  info += '3. Supabase CDN: NOT LOADED\n';
+  det.textContent = info;
+  out.textContent = 'Supabase CDN failed to load';
+  out.style.color = 'orange';
+}
+</script>
+</body>
+</html>
