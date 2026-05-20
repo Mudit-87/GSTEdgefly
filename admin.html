@@ -157,11 +157,10 @@ body{font-family:var(--sans);background:var(--surface);color:var(--ink);font-siz
 
   <div class="main">
 
-    <div class="notice">
-      <strong>⚠ Current data scope:</strong> This admin panel shows leads captured from contact forms on this device/browser only. 
-      To see leads from all visitors across all devices, you need a backend database (Supabase). 
-      All form submissions are stored in localStorage and can be exported to Excel at any time.
-      <strong> Phase 2 upgrade will give you real-time data from all visitors.</strong>
+    <!-- SUPABASE STATUS BAR -->
+    <div id="sb-status-bar" style="display:flex;align-items:center;justify-content:space-between;background:var(--green-pale);border:1px solid rgba(12,124,75,.2);border-radius:10px;padding:10px 18px;margin-bottom:16px;font-size:13px;color:var(--green)">
+      <span><strong>Live Database Connected</strong> &mdash; All data synced from Supabase in real time across all devices and browsers.</span>
+      <span id="sb-last-sync" style="font-size:11px;color:var(--green);font-family:var(--mono)">Loading...</span>
     </div>
 
     <!-- TABS -->
@@ -207,6 +206,7 @@ body{font-family:var(--sans);background:var(--surface);color:var(--ink);font-siz
               <option value="converted">Converted</option>
               <option value="lost">Lost</option>
             </select>
+            <button class="btn btn-ghost" onclick="loadLeadsFromSupabase()">🔄 Refresh from DB</button>
             <button class="btn btn-ghost" onclick="exportLeadsExcel()">⬇ Export Excel</button>
             <button class="btn btn-primary" onclick="openAddLead()">+ Add Manual Lead</button>
           </div>
@@ -748,14 +748,50 @@ async function sbUpdateSub(code, updates) {
 
 // Save lead to Supabase
 async function sbSaveLead(lead) {
-  const sb = getSB();
+  var sb = getSB();
   if (!sb) return false;
-  const { error } = await sb.from('leads').insert({
-    name: lead.name, email: lead.email, firm: lead.firm,
-    phone: lead.phone, city: lead.city, type: lead.type,
-    source: lead.source, plan: lead.plan, notes: lead.notes, status: 'new'
-  });
-  return !error;
+  var obj = {
+    name: lead.name||'', email: lead.email||'', firm: lead.firm||'',
+    phone: lead.phone||'', city: lead.city||'', type: lead.type||'',
+    source: lead.source||'', plan: lead.plan||'', notes: lead.notes||'', status: 'new'
+  };
+  var res = await sb.from('leads').insert(obj);
+  return !res.error;
+}
+
+// Load ALL leads from Supabase — real time, all devices
+async function sbLoadLeads() {
+  var sb = getSB();
+  if (!sb) return null;
+  try {
+    var res = await sb.from('leads').select('*').order('created_at', {ascending: false});
+    if (res.error) { console.error('sbLoadLeads error:', res.error); return null; }
+    // Map Supabase columns to admin format
+    return (res.data || []).map(function(r) {
+      return {
+        id:     r.id,
+        date:   r.created_at,
+        name:   r.name   || '',
+        email:  r.email  || '',
+        firm:   r.firm   || '',
+        phone:  r.phone  || '',
+        city:   r.city   || '',
+        type:   r.type   || 'access',
+        source: r.source || 'Website',
+        plan:   r.plan   || '',
+        notes:  r.notes  || '',
+        status: r.status || 'new'
+      };
+    });
+  } catch(e) { console.error('sbLoadLeads exception:', e); return null; }
+}
+
+// Update lead status in Supabase
+async function sbUpdateLeadStatus(id, status) {
+  var sb = getSB();
+  if (!sb) return false;
+  var res = await sb.from('leads').update({ status: status }).eq('id', id);
+  return !res.error;
 }
 
 function checkAdmin() {
@@ -826,21 +862,58 @@ function logActivity(action, name, detail) {
 // INIT
 // ============================================================
 function initAdmin() {
-  // Increment visit counter
   try {
     var visits = parseInt(localStorage.getItem('admin_visits')||'0') + 1;
     localStorage.setItem('admin_visits', visits);
   } catch(e) {}
 
-  // Load also any leads submitted from the landing page contact forms
-  ingestLandingLeads();
+  // Load leads from Supabase (real time — all devices)
+  loadLeadsFromSupabase();
 
-  renderLeads();
   renderCustomers();
   renderActivity();
   renderSources();
-  renderSessionNote();
   checkExpiryAlerts();
+}
+
+async function loadLeadsFromSupabase() {
+  var syncEl = document.getElementById('sb-last-sync');
+  var barEl  = document.getElementById('sb-status-bar');
+  if (syncEl) syncEl.textContent = 'Syncing...';
+
+  var sbLeads = await sbLoadLeads();
+
+  if (sbLeads !== null) {
+    // Got data from Supabase — merge with any local pending leads
+    try {
+      var pending = JSON.parse(localStorage.getItem('gstedge_leads_pending')||'[]');
+      if (pending.length > 0) {
+        // Push pending leads to Supabase then clear
+        for (var i=0; i<pending.length; i++) {
+          await sbSaveLead(pending[i]);
+        }
+        localStorage.removeItem('gstedge_leads_pending');
+        // Reload after pushing pending
+        sbLeads = await sbLoadLeads() || sbLeads;
+      }
+    } catch(e) {}
+
+    // Save to localStorage as cache
+    saveLeads(sbLeads);
+
+    var now = new Date();
+    if (syncEl) syncEl.textContent = 'Last synced: ' + now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) + ' IST';
+    if (barEl)  { barEl.style.background='var(--green-pale)'; barEl.style.borderColor='rgba(12,124,75,.2)'; barEl.style.color='var(--green)'; }
+  } else {
+    // Supabase unavailable — use localStorage cache
+    ingestLandingLeads();
+    if (barEl)  { barEl.style.background='var(--amber-pale)'; barEl.style.borderColor='rgba(180,83,9,.2)'; barEl.style.color='var(--amber)'; barEl.querySelector('strong').textContent='Using local cache — Supabase unavailable'; }
+    if (syncEl) syncEl.textContent = 'Offline mode';
+  }
+
+  renderLeads();
+  renderSources();
+  logActivity('Admin Load', 'System', 'Leads loaded from ' + (sbLeads !== null ? 'Supabase database' : 'local cache'));
 }
 
 // Pull leads that were saved by the landing page contact forms
