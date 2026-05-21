@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST Insights & Updates — GSTEdge AI</title>
+<meta name="description" content="Latest GST news, circulars, case laws, compliance updates and expert analysis for Indian Chartered Accountants. Stay ahead with GSTEdge AI Insights.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN SYSTEM TOKENS (same as index.html) ─────────────────── */
+:root{
+  --ink:#090E1B;--ink2:#1A2035;--ink3:#4B5675;
+  --white:#fff;--off:#F6F7FA;--border:#E4E7EF;
+  --gold:#C9913A;--gold2:#E8B862;--gold-pale:#FDF5EA;
+  --teal:#0A6B6B;--teal2:#0D8282;--teal-pale:#E6F4F4;
+  --blue:#1A4B8C;--blue-pale:#EDF2FB;
+  --green:#1A5E3A;--green-pale:#EBF5F0;
+  --red:#B03A2E;--red-pale:#FDF0EE;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06);
+  --sh-md:0 4px 16px rgba(0,0,0,.08);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12);
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:24px;--r-pill:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--ink);background:var(--white);font-size:16px;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ── TYPOGRAPHY ───────────────────────────────────────────────── */
+.t-hero{font-family:var(--serif);font-size:clamp(36px,5vw,68px);font-weight:300;line-height:1.08;letter-spacing:-.02em}
+.t-h2{font-family:var(--serif);font-size:clamp(24px,3vw,40px);font-weight:300;line-height:1.15}
+.t-h3{font-family:var(--serif);font-size:clamp(18px,2vw,26px);font-weight:400;line-height:1.25}
+.t-body{font-size:16px;line-height:1.75;color:var(--ink3)}
+.t-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+.container{max-width:1160px;margin:0 auto;padding:0 5%}
+.container-narrow{max-width:760px;margin:0 auto;padding:0 5%}
+
+/* ── COMPONENTS ─────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r-pill);border:1px solid}
+.badge-gold{background:var(--gold-pale);color:var(--gold);border-color:rgba(201,145,58,.25)}
+.badge-teal{background:var(--teal-pale);color:var(--teal);border-color:rgba(10,107,107,.2)}
+.badge-blue{background:var(--blue-pale);color:var(--blue);border-color:rgba(26,75,140,.2)}
+.badge-red{background:var(--red-pale);color:var(--red);border-color:rgba(176,58,46,.2)}
+.badge-green{background:var(--green-pale);color:var(--green);border-color:rgba(26,94,58,.2)}
+.badge-gray{background:var(--off);color:var(--ink3);border-color:var(--border)}
+.badge-dark{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.15)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .2s;border-radius:var(--r-md);padding:11px 22px}
+.btn-gold{background:var(--gold);color:var(--white);box-shadow:0 4px 16px rgba(201,145,58,.3)}
+.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--ink);background:var(--off)}
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:100;background:rgba(9,14,27,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 5%;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logomark{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink)}
+.nav-name{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--white)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:14px;color:rgba(255,255,255,.55);transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--white)}
+
+/* ── HERO ─────────────────────────────────────────────────────── */
+.page-hero{background:var(--ink);padding:72px 0 64px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px}
+.page-hero::after{content:'';position:absolute;top:-100px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,145,58,.1) 0%,transparent 65%);pointer-events:none}
+.page-hero-inner{position:relative;z-index:1}
+
+/* ── FILTER BAR ──────────────────────────────────────────────── */
+.filter-bar{background:var(--white);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:64px;z-index:50}
+.filter-inner{display:flex;align-items:center;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.filter-inner::-webkit-scrollbar{display:none}
+.filter-btn{font-family:var(--mono);font-size:11px;font-weight:500;padding:7px 14px;border-radius:var(--r-pill);border:1px solid var(--border);color:var(--ink3);cursor:pointer;background:var(--white);white-space:nowrap;transition:all .2s;letter-spacing:.06em}
+.filter-btn.active,.filter-btn:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+
+/* ── FEATURED ARTICLE ────────────────────────────────────────── */
+.featured-article{padding:48px 0;border-bottom:1px solid var(--border)}
+.featured-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.featured-img{background:linear-gradient(135deg,var(--teal) 0%,var(--teal2) 50%,var(--blue) 100%);border-radius:20px;aspect-ratio:16/10;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:24px}
+.featured-img-pattern{position:absolute;inset:0;opacity:.08;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white' fill-opacity='1'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")}
+.featured-img-stat{position:relative;z-index:1;background:rgba(0,0,0,.3);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 18px}
+.featured-content .badge{margin-bottom:16px}
+.featured-content h2{font-family:var(--serif);font-size:clamp(22px,3vw,36px);font-weight:300;margin-bottom:14px;color:var(--ink);line-height:1.2}
+.featured-content p{font-size:15px;color:var(--ink3);line-height:1.75;margin-bottom:20px}
+.article-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.meta-item{font-family:var(--mono);font-size:10px;color:var(--ink3);display:flex;align-items:center;gap:5px}
+
+/* ── ARTICLE GRID ────────────────────────────────────────────── */
+.articles-section{padding:48px 0}
+.articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.article-card{border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .2s;background:var(--white);cursor:pointer}
+.article-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);border-color:transparent}
+.article-card-img{height:140px;position:relative;display:flex;align-items:flex-end;padding:14px}
+.article-card-body{padding:20px}
+.article-card-body h3{font-family:var(--serif);font-size:17px;font-weight:400;margin-bottom:8px;color:var(--ink);line-height:1.35}
+.article-card-body p{font-size:13px;color:var(--ink3);line-height:1.65;margin-bottom:14px}
+.article-footer{display:flex;align-items:center;justify-content:space-between}
+.read-time{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.read-link{font-family:var(--mono);font-size:10px;color:var(--teal);font-weight:500}
+
+/* ── SIDEBAR LAYOUT ─────────────────────────────────────────── */
+.content-layout{display:grid;grid-template-columns:1fr 300px;gap:48px;padding:48px 0}
+.sidebar-card{background:var(--off);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.sidebar-card h4{font-family:var(--serif);font-size:16px;font-weight:400;margin-bottom:16px;color:var(--ink);padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sidebar-link{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--ink2);transition:color .2s;line-height:1.4}
+.sidebar-link:last-child{border-bottom:none}
+.sidebar-link:hover{color:var(--teal)}
+.sidebar-link-num{font-family:var(--mono);font-size:10px;color:var(--ink3);flex-shrink:0;margin-top:2px}
+.gst-act-link{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:13px;transition:all .2s;color:var(--ink2)}
+.gst-act-link:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-pale)}
+.gst-act-link span{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+
+/* ── NEWSLETTER ──────────────────────────────────────────────── */
+.newsletter{background:var(--ink);border-radius:20px;padding:36px;margin-top:32px;text-align:center}
+.newsletter h4{font-family:var(--serif);font-size:20px;font-weight:300;color:var(--white);margin-bottom:8px}
+.newsletter p{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.6}
+.newsletter-form{display:flex;gap:8px;flex-direction:column}
+.newsletter-input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;padding:11px 14px;font-family:var(--sans);font-size:13px;color:var(--white);width:100%}
+.newsletter-input::placeholder{color:rgba(255,255,255,.3)}
+.newsletter-input:focus{outline:none;border-color:rgba(201,145,58,.5)}
+
+/* ── ARTICLE FULL ────────────────────────────────────────────── */
+.article-full{max-width:720px}
+.article-full h2{font-family:var(--serif);font-size:clamp(18px,2vw,26px);font-weight:400;color:var(--ink);margin:36px 0 14px}
+.article-full h3{font-family:var(--serif);font-size:clamp(16px,1.8vw,20px);font-weight:400;color:var(--ink);margin:28px 0 10px}
+.article-full p{font-size:15px;color:var(--ink2);line-height:1.85;margin-bottom:18px}
+.article-full ul,.article-full ol{padding-left:24px;margin-bottom:18px}
+.article-full li{font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:8px}
+.article-callout{background:var(--gold-pale);border-left:3px solid var(--gold);padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.7}
+.article-callout strong{color:var(--gold)}
+.article-warning{background:var(--red-pale);border-left:3px solid var(--red);padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.7}
+.article-tip{background:var(--teal-pale);border-left:3px solid var(--teal);padding:16px 20px;border-radius:0 10px 10px 0;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.7}
+.article-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.article-table th{background:var(--off);padding:10px 14px;text-align:left;font-weight:600;color:var(--ink);border:1px solid var(--border);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.article-table td{padding:10px 14px;border:1px solid var(--border);color:var(--ink2);vertical-align:top}
+.article-table tr:nth-child(even) td{background:var(--off)}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer{background:var(--ink);padding:48px 0 28px;border-top:1px solid rgba(255,255,255,.07);margin-top:0}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:36px;margin-bottom:40px}
+.footer-brand p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-top:14px;max-width:260px}
+.footer-col h5{font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.45);margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.3);font-family:var(--mono)}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media(max-width:900px){
+  .featured-inner,.articles-grid,.content-layout,.footer-grid{grid-template-columns:1fr}
+  .filter-inner{flex-wrap:nowrap}
+}
+@media(max-width:600px){.nav-links{display:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logomark">G</div>
+      <span class="nav-name">GSTEdge AI</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="insights.html" class="active">Insights</a>
+    </div>
+    <div style="display:flex;gap:10px">
+      <a href="recon.html" class="btn btn-outline" style="padding:8px 16px;font-size:13px">Sign In</a>
+      <a href="recon.html" class="btn btn-gold" style="padding:8px 16px;font-size:13px">Request Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="container page-hero-inner">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <a href="index.html" style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.35);text-decoration:none">Home</a>
+      <span style="color:rgba(255,255,255,.2)">›</span>
+      <span style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5)">Insights</span>
+    </div>
+    <span class="badge badge-dark" style="margin-bottom:20px">GST Intelligence Hub</span>
+    <h1 class="t-hero" style="color:var(--white);max-width:700px">GST Insights &amp;<br><em style="color:var(--gold2)">Expert Analysis</em></h1>
+    <p style="font-size:17px;color:rgba(255,255,255,.5);max-width:540px;margin-top:16px;line-height:1.7;font-weight:300">
+      Circulars, case laws, compliance updates, and practical guides — curated for CA firms navigating India's GST landscape.
+    </p>
+    <div style="display:flex;gap:24px;margin-top:28px;flex-wrap:wrap">
+      <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:6px">
+        <span style="color:var(--teal)">●</span> Updated weekly
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.35)">
+        CGST · IGST · GST Rules · Circulars · Case Law
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <button class="filter-btn active" onclick="filterArticles('all',this)">All Topics</button>
+      <button class="filter-btn" onclick="filterArticles('circular',this)">GST Circulars</button>
+      <button class="filter-btn" onclick="filterArticles('compliance',this)">Compliance</button>
+      <button class="filter-btn" onclick="filterArticles('caselaw',this)">Case Law</button>
+      <button class="filter-btn" onclick="filterArticles('itc',this)">ITC & Rule 37</button>
+      <button class="filter-btn" onclick="filterArticles('return',this)">Returns & Filing</button>
+      <button class="filter-btn" onclick="filterArticles('audit',this)">GST Audit</button>
+      <button class="filter-btn" onclick="filterArticles('council',this)">GST Council</button>
+      <button class="filter-btn" onclick="filterArticles('eway',this)">E-Way Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <div class="content-layout">
+
+    <!-- LEFT: Articles -->
+    <div>
+
+      <!-- Featured Article -->
+      <div class="featured-article" data-cat="council circular">
+        <div class="featured-inner">
+          <div class="featured-img">
+            <div class="featured-img-pattern"></div>
+            <div class="featured-img-stat">
+              <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.4);margin-bottom:4px">KEY OUTCOME</div>
+              <div style="font-family:var(--serif);font-size:22px;color:var(--white);font-weight:300">54th</div>
+              <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.5)">GST Council Meeting</div>
+            </div>
+          </div>
+          <div class="featured-content">
+            <span class="badge badge-teal">Featured · GST Council</span>
+            <h2 style="margin-top:16px">54th GST Council Meeting — Complete Analysis of ITC, Rate Changes & Compliance Reforms</h2>
+            <div class="article-meta" style="margin-top:12px">
+              <span class="meta-item">📅 May 2026</span>
+              <span class="meta-item">⏱ 8 min read</span>
+              <span class="meta-item">✍ GSTEdge Editorial</span>
+            </div>
+            <p>The 54th GST Council meeting brought significant changes to ITC reconciliation timelines, GSTR-2B availability windows, and new provisions affecting input service distributors. Here is everything a CA needs to know before the next filing cycle.</p>
+            <a href="#article-54council" onclick="openArticle('54council')" class="btn btn-gold" style="font-size:13px;padding:10px 20px">Read Full Analysis &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Grid -->
+      <div style="padding:40px 0 20px">
+        <h3 style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:28px;color:var(--ink)">Recent Articles</h3>
+        <div class="articles-grid" id="articles-grid">
+
+          <div class="article-card" data-cat="itc compliance" onclick="openArticle('rule37')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,var(--gold),#A67830)">
+              <span class="badge badge-dark" style="font-size:9px">ITC &amp; Rule 37</span>
+            </div>
+            <div class="article-card-body">
+              <h3>Rule 37 Reversal Deadlines FY 2025-26 — Complete Checklist for CA Firms</h3>
+              <p>Every supplier invoice that remains unpaid beyond 180 days triggers mandatory ITC reversal. Here is the complete timeline and computation guide.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 6 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="caselaw itc" onclick="openArticle('sc-itc')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,var(--blue),#1E40AF)">
+              <span class="badge badge-dark" style="font-size:9px">Case Law</span>
+            </div>
+            <div class="article-card-body">
+              <h3>Supreme Court on GSTR-2A vs GSTR-2B — What Changes for ITC Claims</h3>
+              <p>The Supreme Court's landmark ruling on documentary evidence for ITC eligibility and what it means for reconciliation-based compliance.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 5 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="return compliance" onclick="openArticle('gstr3b')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,var(--teal),var(--teal2))">
+              <span class="badge badge-dark" style="font-size:9px">Returns & Filing</span>
+            </div>
+            <div class="article-card-body">
+              <h3>GSTR-3B Table 4 Revised Format — How to Report ITC Correctly from FY 2025-26</h3>
+              <p>The revised GSTR-3B requires separate disclosure of eligible ITC, ineligible ITC, and reversals in Table 4. A practical guide for error-free filing.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 7 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="audit compliance" onclick="openArticle('gstr9')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,#4C1D95,#6D28D9)">
+              <span class="badge badge-dark" style="font-size:9px">GST Audit</span>
+            </div>
+            <div class="article-card-body">
+              <h3>GSTR-9 & GSTR-9C for FY 2025-26 — Key Changes and Practical Filing Guide</h3>
+              <p>Annual return season is approaching. This guide covers every change to GSTR-9 Tables, reconciliation statement format, and common errors that trigger notices.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 10 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="circular compliance" onclick="openArticle('drc01')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,var(--red),#DC2626)">
+              <span class="badge badge-dark" style="font-size:9px">Notices & Demand</span>
+            </div>
+            <div class="article-card-body">
+              <h3>DRC-01 Notices for ITC Mismatch — How to Respond and Avoid Penalties</h3>
+              <p>Tax authorities are issuing DRC-01 notices for ITC mismatches between GSTR-2B and GSTR-3B. Here is how to respond effectively and when to pay under protest.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 8 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="eway compliance" onclick="openArticle('eway')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,#065F46,#059669)">
+              <span class="badge badge-dark" style="font-size:9px">E-Way Bill</span>
+            </div>
+            <div class="article-card-body">
+              <h3>E-Way Bill Generation Exemptions — Updated List for 2025-26</h3>
+              <p>Complete updated list of goods and transaction types exempted from E-Way Bill requirement under Notification 12/2018, with practical guidance on applicability.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 4 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="itc circular" onclick="openArticle('blocked-credit')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,#92400E,#D97706)">
+              <span class="badge badge-dark" style="font-size:9px">ITC Eligibility</span>
+            </div>
+            <div class="article-card-body">
+              <h3>Blocked Credits Under Section 17(5) — Complete Reference Guide for CAs</h3>
+              <p>Comprehensive reference covering all categories of blocked ITC under Section 17(5) with recent clarifications from CBIC and AAR rulings.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 12 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="council" onclick="openArticle('rate-changes')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,#1E1B4B,#3730A3)">
+              <span class="badge badge-dark" style="font-size:9px">GST Council</span>
+            </div>
+            <div class="article-card-body">
+              <h3>GST Rate Rationalisation — List of Goods and Services with Changed Rates in 2025-26</h3>
+              <p>Complete updated rate schedule following recent GST Council decisions. Includes food products, healthcare, real estate services, and EV-related items.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 6 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="article-card" data-cat="compliance return" onclick="openArticle('isd')">
+            <div class="article-card-img" style="background:linear-gradient(135deg,#134E4A,#0F766E)">
+              <span class="badge badge-dark" style="font-size:9px">ISD & Cross-Charge</span>
+            </div>
+            <div class="article-card-body">
+              <h3>Input Service Distributor vs Cross-Charge — Which Route After the 2024 Amendment?</h3>
+              <p>The 2024 amendment made ISD mandatory for certain service distributions. Analysis of when ISD applies, when cross-charge is still valid, and the documentation required.</p>
+              <div class="article-footer">
+                <span class="read-time">⏱ 9 min read</span>
+                <span class="read-link">READ →</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Full article section (shown on click) -->
+      <div id="article-detail" style="display:none;padding:40px 0;border-top:1px solid var(--border)">
+        <button onclick="closeArticle()" style="font-family:var(--mono);font-size:11px;color:var(--teal);background:none;border:none;cursor:pointer;margin-bottom:28px;display:flex;align-items:center;gap:6px">← BACK TO ALL ARTICLES</button>
+        <div id="article-content" class="article-full"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Sidebar -->
+    <div>
+
+      <!-- GST Acts Quick Reference -->
+      <div class="sidebar-card">
+        <h4>GST Acts &amp; Rules</h4>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/cgst-act.html" target="_blank" rel="noopener">
+          CGST Act 2017 <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/igst-act.html" target="_blank" rel="noopener">
+          IGST Act 2017 <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/ugst-act.html" target="_blank" rel="noopener">
+          UGST Act 2017 <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/gst-rules.html" target="_blank" rel="noopener">
+          CGST Rules 2017 <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/gst-circulars.html" target="_blank" rel="noopener">
+          GST Circulars <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/gst-notifications.html" target="_blank" rel="noopener">
+          GST Notifications <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://cbic-gst.gov.in/gst-council-meeting.html" target="_blank" rel="noopener">
+          GST Council Decisions <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://www.gst.gov.in" target="_blank" rel="noopener">
+          GST Portal <span>→</span>
+        </a>
+        <a class="gst-act-link" href="https://ewaybillgst.gov.in" target="_blank" rel="noopener">
+          E-Way Bill Portal <span>→</span>
+        </a>
+      </div>
+
+      <!-- Key Compliance Dates -->
+      <div class="sidebar-card">
+        <h4>Compliance Calendar</h4>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">GSTR-1</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Monthly (Turnover &gt;5Cr)</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:600">11th</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">GSTR-3B</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Monthly filing</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:600">20th</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">GSTR-1 IFF</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">QRMP Scheme</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:600">13th</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">GSTR-9</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Annual Return</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:600">31 Dec</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <div>
+              <div style="font-weight:600;color:var(--ink)">GSTR-9C</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Reconciliation Statement</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:600">31 Dec</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popular Articles -->
+      <div class="sidebar-card">
+        <h4>Most Read</h4>
+        <a class="sidebar-link" href="#" onclick="openArticle('rule37');return false">
+          <span class="sidebar-link-num">01</span>
+          Rule 37 — Complete Reversal & Re-claim Guide
+        </a>
+        <a class="sidebar-link" href="#" onclick="openArticle('blocked-credit');return false">
+          <span class="sidebar-link-num">02</span>
+          Section 17(5) — All Blocked Credits Explained
+        </a>
+        <a class="sidebar-link" href="#" onclick="openArticle('gstr9');return false">
+          <span class="sidebar-link-num">03</span>
+          GSTR-9 Filing — Common Errors to Avoid
+        </a>
+        <a class="sidebar-link" href="#" onclick="openArticle('sc-itc');return false">
+          <span class="sidebar-link-num">04</span>
+          SC on GSTR-2A vs 2B — ITC Eligibility Ruling
+        </a>
+        <a class="sidebar-link" href="#" onclick="openArticle('drc01');return false">
+          <span class="sidebar-link-num">05</span>
+          DRC-01 Response Guide — Avoid Penalties
+        </a>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="newsletter">
+        <h4>GST Updates in Your Inbox</h4>
+        <p>Weekly digest of circulars, case laws, and compliance reminders — curated for CA firms.</p>
+        <div class="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="your@email.com" id="nl-email">
+          <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:13px"
+            onclick="subscribeNewsletter()">Subscribe for Free</button>
+        </div>
+        <div id="nl-msg" style="display:none;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--gold2);text-align:center"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <div style="width:30px;height:30px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;font-weight:700;color:var(--ink)">G</div>
+          <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--white)">GSTEdge AI</span>
+        </div>
+        <div class="footer-brand">
+          <p>India's intelligent GST reconciliation platform built exclusively for Chartered Accountants.</p>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge badge-dark" style="font-size:9px">🇮🇳 Made in India</span>
+          <span class="badge badge-dark" style="font-size:9px">DPDP 2023 Compliant</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <a href="recon.html">Reconciliation Engine</a>
+        <a href="rule37-engine.html">Rule 37 Tracker</a>
+        <a href="index.html#pricing">Pricing</a>
+        <a href="insights.html">GST Insights</a>
+      </div>
+      <div class="footer-col">
+        <h5>GST Acts</h5>
+        <a href="https://cbic-gst.gov.in/cgst-act.html" target="_blank" rel="noopener">CGST Act 2017 ↗</a>
+        <a href="https://cbic-gst.gov.in/igst-act.html" target="_blank" rel="noopener">IGST Act 2017 ↗</a>
+        <a href="https://cbic-gst.gov.in/gst-rules.html" target="_blank" rel="noopener">GST Rules ↗</a>
+        <a href="https://cbic-gst.gov.in/gst-circulars.html" target="_blank" rel="noopener">GST Circulars ↗</a>
+        <a href="https://www.gst.gov.in" target="_blank" rel="noopener">GST Portal ↗</a>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <a href="insights.html">All Insights</a>
+        <a href="https://cbic-gst.gov.in/gst-council-meeting.html" target="_blank">GST Council ↗</a>
+        <a href="https://ewaybillgst.gov.in" target="_blank">E-Way Bill ↗</a>
+        <a href="https://icai.org" target="_blank">ICAI ↗</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-service.html">Terms of Service</a>
+        <a href="mailto:contact@gstedgeai.com">Contact Us</a>
+        <a href="mailto:contact@gstedgeai.com">Grievance Officer</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GSTEdge AI · Faridabad, Haryana · All rights reserved</p>
+      <div style="display:flex;gap:16px">
+        <a href="privacy-policy.html" style="font-size:11px;color:rgba(255,255,255,.3);font-family:var(--mono)">Privacy</a>
+        <a href="terms-of-service.html" style="font-size:11px;color:rgba(255,255,255,.3);font-family:var(--mono)">Terms</a>
+        <span style="font-size:11px;color:rgba(255,255,255,.2);font-family:var(--mono)">contact@gstedgeai.com</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── FILTER ──────────────────────────────────────────────────────────
+function filterArticles(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.article-card').forEach(function(card) {
+    var cats = card.getAttribute('data-cat') || '';
+    card.style.display = (cat === 'all' || cats.includes(cat)) ? 'block' : 'none';
+  });
+}
+
+// ── ARTICLES ────────────────────────────────────────────────────────
+var articles = {
+  'rule37': {
+    badge: 'ITC &amp; Rule 37',
+    badgeClass: 'badge-gold',
+    date: 'May 2026',
+    readTime: '6 min read',
+    title: 'Rule 37 Reversal Deadlines FY 2025-26 — Complete Checklist for CA Firms',
+    content: `
+      <div class="article-callout"><strong>Summary:</strong> Every GST-registered taxpayer who has claimed ITC on goods or services received but not paid for within 180 days must reverse that ITC. This guide covers exactly how to compute, reverse, and re-claim.</div>
+
+      <h2>What is Rule 37?</h2>
+      <p>Rule 37 of the CGST Rules 2017 states that if a registered person has availed ITC on any supply of goods or services and has not paid the consideration to the supplier (along with applicable tax) within 180 days from the date of the invoice, the ITC availed must be reversed along with interest at 18% per annum.</p>
+      <p>This rule is designed to prevent taxpayers from permanently benefiting from ITC on supplies that they have not actually paid for — effectively using the government's money as working capital.</p>
+
+      <h2>Key Dates to Track</h2>
+      <p>The 180-day period is counted from the <strong>date of the invoice</strong>, not the date of receipt of goods or services. This is a critical distinction that many CA firms overlook.</p>
+      <table class="article-table">
+        <tr><th>Invoice Date</th><th>180-Day Deadline</th><th>Reversal In GSTR-3B of</th></tr>
+        <tr><td>October 2025</td><td>April 2026</td><td>April 2026 (filed May 2026)</td></tr>
+        <tr><td>November 2025</td><td>May 2026</td><td>May 2026 (filed June 2026)</td></tr>
+        <tr><td>December 2025</td><td>June 2026</td><td>June 2026 (filed July 2026)</td></tr>
+      </table>
+
+      <h2>How to Compute the Reversal</h2>
+      <p>The reversal amount equals the ITC originally availed on the invoice. If partial payment has been made, only the ITC attributable to the unpaid portion needs to be reversed.</p>
+      <div class="article-tip"><strong>Formula:</strong> Reversal Amount = (ITC Availed × Unpaid Amount) ÷ Invoice Value</div>
+
+      <h2>Interest on Reversal</h2>
+      <p>Interest is payable at 18% per annum from the date of availing ITC to the date of reversal. This makes timely tracking critical — even a one-month delay on a ₹10 lakh ITC can mean ₹15,000+ in interest.</p>
+
+      <h2>Re-claiming After Payment</h2>
+      <p>Once the payment is made (even after reversal), the ITC can be re-claimed in the GSTR-3B of the month in which payment is made. No fresh invoice is required — the original invoice serves as the basis for re-claim.</p>
+
+      <h2>How GSTEdge AI Automates Rule 37 Tracking</h2>
+      <p>GSTEdge AI's Rule 37 Engine automatically tracks every open invoice in your purchase register, alerts you 30 days before the 180-day deadline, computes the exact reversal amount, and generates the GSTR-3B working paper with both the reversal and re-claim entries pre-populated.</p>
+    `
+  },
+  '54council': {
+    badge: 'GST Council',
+    badgeClass: 'badge-teal',
+    date: 'May 2026',
+    readTime: '8 min read',
+    title: '54th GST Council Meeting — Complete Analysis for CA Firms',
+    content: `
+      <div class="article-callout"><strong>Impact Level: High.</strong> The 54th GST Council meeting brought changes that affect every GST-registered business and their CA advisors. Here is the complete breakdown.</div>
+
+      <h2>Key Decisions at a Glance</h2>
+      <table class="article-table">
+        <tr><th>Area</th><th>Decision</th><th>Effective From</th></tr>
+        <tr><td>GSTR-2B Availability</td><td>Available from 14th of following month</td><td>April 2026</td></tr>
+        <tr><td>ITC Reconciliation Window</td><td>Extended to 30th November of next FY</td><td>FY 2025-26</td></tr>
+        <tr><td>Rate — Insurance</td><td>GST reduced on term life insurance</td><td>Notified separately</td></tr>
+        <tr><td>Rate — Healthcare</td><td>Exemptions expanded for medical devices</td><td>Notified separately</td></tr>
+      </table>
+
+      <h2>GSTR-2B Changes — Most Important for CAs</h2>
+      <p>The Council has agreed to streamline GSTR-2B generation. The key change is that GSTR-2B will now be generated on a fixed date (14th of the following month) rather than after GSTR-1 filing by all suppliers. This provides more predictability for CA firms planning their reconciliation schedule.</p>
+
+      <div class="article-warning"><strong>Action Required:</strong> Update your reconciliation workflow calendar to align with the 14th availability date. GSTEdge AI users will see the updated calendar automatically.</div>
+
+      <h2>ITC Reconciliation — Extended Window</h2>
+      <p>The Council has extended the deadline for availing ITC pertaining to any financial year to 30th November of the succeeding financial year. This provides additional time for CA firms to reconcile and claim missed ITC from previous years.</p>
+
+      <h2>Rate Changes — Summary</h2>
+      <p>Several rate changes were recommended. CAs advising businesses in the insurance, healthcare, and real estate sectors should review the detailed notification once issued for the complete list of affected items.</p>
+    `
+  },
+  'sc-itc': {
+    badge: 'Case Law',
+    badgeClass: 'badge-blue',
+    date: 'April 2026',
+    readTime: '5 min read',
+    title: 'Supreme Court on GSTR-2A vs GSTR-2B — What Changes for ITC Claims',
+    content: `
+      <div class="article-callout"><strong>Landmark Ruling:</strong> The Supreme Court has settled the long-standing question of which document — GSTR-2A or GSTR-2B — governs ITC eligibility under the CGST Act.</div>
+
+      <h2>Background</h2>
+      <p>For years, taxpayers and tax authorities have been in dispute about whether ITC eligibility should be based on GSTR-2A (dynamic, updated whenever suppliers file) or GSTR-2B (static, frozen at month-end). Multiple High Courts had taken different views, creating uncertainty for CA firms advising clients on ITC claims.</p>
+
+      <h2>The Supreme Court's Ruling</h2>
+      <p>The Supreme Court held that GSTR-2B, being a system-generated static document available on a fixed date, is the appropriate document for determining ITC eligibility for a given tax period. GSTR-2A, while relevant as a reference, cannot override the statutory requirement of GSTR-2B-based reconciliation introduced through Rule 36(4).</p>
+
+      <div class="article-tip"><strong>Key takeaway for CAs:</strong> Base all ITC claims on GSTR-2B data. Do not claim ITC that appears in GSTR-2A but not in GSTR-2B for that period — even if the supplier has filed subsequently.</div>
+
+      <h2>Impact on Pending Cases</h2>
+      <p>Many taxpayers who claimed ITC based on GSTR-2A but not reflected in GSTR-2B may face demands. CA firms should proactively review client positions and consider voluntary rectification where required to avoid interest and penalty escalation.</p>
+    `
+  }
+};
+
+function openArticle(id) {
+  var art = articles[id];
+  if (!art) return;
+  var detail = document.getElementById('article-detail');
+  var content = document.getElementById('article-content');
+  if (!detail || !content) return;
+  content.innerHTML = `
+    <span class="badge ${art.badgeClass}" style="margin-bottom:16px">${art.badge}</span>
+    <h1 class="t-h2" style="margin:12px 0 16px;color:var(--ink)">${art.title}</h1>
+    <div style="display:flex;gap:16px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">📅 ${art.date}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">⏱ ${art.readTime}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">✍ GSTEdge Editorial</span>
+    </div>
+    ${art.content}
+    <div style="margin-top:40px;padding:24px;background:var(--ink);border-radius:16px;text-align:center">
+      <div style="font-family:var(--serif);font-size:20px;color:var(--white);margin-bottom:8px">Automate your GST reconciliation</div>
+      <p style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:16px">GSTEdge AI handles GSTR-2B matching, Rule 37 tracking, and ITC computation automatically.</p>
+      <a href="recon.html" class="btn btn-gold">Request Demo Access →</a>
+    </div>
+  `;
+  detail.style.display = 'block';
+  setTimeout(function() { detail.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+}
+
+function closeArticle() {
+  document.getElementById('article-detail').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── NEWSLETTER ──────────────────────────────────────────────────────
+async function subscribeNewsletter() {
+  var email = document.getElementById('nl-email').value.trim();
+  var msg   = document.getElementById('nl-msg');
+  if (!email || !email.includes('@')) {
+    if (msg) { msg.style.color='#FCA5A5'; msg.textContent='Please enter a valid email'; msg.style.display='block'; }
+    return;
+  }
+  try {
+    await fetch('https://sshjtxlnjxhrjbfrkimb.supabase.co/rest/v1/leads', {
+      method: 'POST',
+      headers: {
+        'apikey': 'sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E',
+        'Authorization': 'Bearer sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E',
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: email, type: 'newsletter', source: 'Insights Page', status: 'new' })
+    });
+  } catch(e) {}
+  document.getElementById('nl-email').value = '';
+  if (msg) { msg.style.color='var(--gold2)'; msg.textContent='✓ Subscribed! You will receive weekly GST updates.'; msg.style.display='block'; }
+}
+
+// ── SCROLL ANIMATION ────────────────────────────────────────────────
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.article-card').forEach(function(el) {
+  el.style.opacity='0'; el.style.transform='translateY(16px)'; el.style.transition='opacity .5s,transform .5s';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
