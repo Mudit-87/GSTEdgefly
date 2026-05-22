@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSTEdge AI — India's Intelligent GST Reconciliation Platform</title>
+<meta name="description" content="GSTEdge AI automates GST reconciliation for Indian CA firms. Match GSTR-2B in minutes, not days. Rule 37 tracking, ITC analysis, vendor scoring.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!--
+================================================================
+  GSTEDGE AI — MASTER DESIGN SYSTEM v1.0
+  Copy this block to every page for consistent branding.
+================================================================
+  FONTS
+    Serif / Display : Fraunces        — headings, hero, large numbers
+    Sans / Body     : DM Sans         — body copy, UI, navigation
+    Mono / Labels   : JetBrains Mono  — badges, codes, data labels
+
+  COLOURS
+    --ink       #090E1B   Primary dark (backgrounds, text)
+    --ink2      #1A2035   Secondary dark
+    --ink3      #4B5675   Muted / tertiary text
+    --white     #FFFFFF
+    --off       #F6F7FA   Off-white surface
+    --border    #E4E7EF   Subtle border
+
+    --gold      #C9913A   PRIMARY CTA — always gold for main actions
+    --gold2     #E8B862   Gold hover / light
+    --gold-pale #FDF5EA   Gold tint backgrounds
+
+    --teal      #0A6B6B   Secondary accent — reliability / GST data
+    --teal2     #0D8282   Teal hover
+    --teal-pale #E6F4F4   Teal tint
+
+    --blue      #1A4B8C   Tertiary — trust / data
+    --blue-pale #EDF2FB
+
+    --green     #1A5E3A   Success / positive ITC
+    --green-pale #EBF5F0
+
+    --red       #B03A2E   Risk / warning / reversal
+    --red-pale  #FDF0EE
+
+  SPACING (base 4px)
+    --sp-xs: 4px  --sp-sm: 8px  --sp-md: 16px
+    --sp-lg: 24px --sp-xl: 40px --sp-2xl: 64px --sp-3xl: 96px
+
+  BORDER RADIUS
+    --r-sm: 6px  --r-md: 10px  --r-lg: 16px  --r-xl: 24px  --r-pill: 999px
+
+  SHADOWS
+    --sh-sm: 0 1px 3px rgba(0,0,0,.06)
+    --sh-md: 0 4px 16px rgba(0,0,0,.08)
+    --sh-lg: 0 12px 40px rgba(0,0,0,.12)
+    --sh-xl: 0 24px 80px rgba(0,0,0,.18)
+
+  SECTION RHYTHM (always alternate):
+    Hero      → dark  (--ink bg, white text)
+    Stats     → dark  (--ink bg, gold accents)
+    Benefits  → white (white bg, dark text)
+    Features  → --off (off-white bg)
+    Proof     → --ink (dark bg)
+    Pricing   → white (white bg)
+    CTA       → gold  (gold bg, dark text)
+    Footer    → --ink (dark bg)
+
+  RULES
+    1. Never use Inter, Roboto, or system-ui fonts
+    2. Gold (#C9913A) is the ONLY primary CTA colour
+    3. All headings: font-family var(--serif)
+    4. All body: font-family var(--sans)
+    5. All labels/badges/data: font-family var(--mono)
+    6. Section padding: 80px vertical desktop, 48px mobile
+================================================================
+-->
+
+<style>
+/* ── DESIGN SYSTEM TOKENS ──────────────────────────────────────── */
+:root {
+  --ink:#090E1B; --ink2:#1A2035; --ink3:#4B5675;
+  --white:#fff; --off:#F6F7FA; --border:#E4E7EF;
+  --gold:#C9913A; --gold2:#E8B862; --gold-pale:#FDF5EA;
+  --teal:#0A6B6B; --teal2:#0D8282; --teal-pale:#E6F4F4;
+  --blue:#1A4B8C; --blue-pale:#EDF2FB;
+  --green:#1A5E3A; --green-pale:#EBF5F0;
+  --red:#B03A2E; --red-pale:#FDF0EE;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06);
+  --sh-md:0 4px 16px rgba(0,0,0,.08);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12);
+  --sh-xl:0 24px 80px rgba(0,0,0,.18);
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:24px; --r-pill:999px;
+}
+
+/* ── RESET ──────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--ink);background:var(--white);font-size:16px;line-height:1.6;overflow-x:hidden}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ── TYPOGRAPHY SCALE ───────────────────────────────────────────── */
+.t-hero     {font-family:var(--serif);font-size:clamp(40px,6vw,80px);font-weight:300;line-height:1.08;letter-spacing:-.02em}
+.t-h1       {font-family:var(--serif);font-size:clamp(32px,4.5vw,60px);font-weight:300;line-height:1.1}
+.t-h2       {font-family:var(--serif);font-size:clamp(26px,3.5vw,48px);font-weight:300;line-height:1.15}
+.t-h3       {font-family:var(--serif);font-size:clamp(20px,2.5vw,30px);font-weight:400;line-height:1.2}
+.t-body     {font-family:var(--sans);font-size:16px;line-height:1.7;color:var(--ink3)}
+.t-label    {font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+.t-stat     {font-family:var(--serif);font-size:clamp(36px,5vw,64px);font-weight:300;line-height:1}
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+.container  {max-width:1160px;margin:0 auto;padding:0 5%}
+.section    {padding:96px 0}
+.section-sm {padding:64px 0}
+.grid-2     {display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.grid-3     {display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.grid-4     {display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+
+/* ── COMPONENTS ─────────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:var(--r-pill);border:1px solid}
+.badge-gold{background:var(--gold-pale);color:var(--gold);border-color:rgba(201,145,58,.25)}
+.badge-teal{background:var(--teal-pale);color:var(--teal);border-color:rgba(10,107,107,.2)}
+.badge-blue{background:var(--blue-pale);color:var(--blue);border-color:rgba(26,75,140,.2)}
+.badge-dark{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.15)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--sans);font-weight:600;font-size:15px;border:none;cursor:pointer;transition:all .2s;border-radius:var(--r-md);text-decoration:none;white-space:nowrap}
+.btn-gold{background:var(--gold);color:var(--white);padding:14px 28px;box-shadow:0 4px 20px rgba(201,145,58,.35)}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 8px 28px rgba(201,145,58,.45)}
+.btn-outline-white{background:transparent;color:var(--white);padding:13px 26px;border:1.5px solid rgba(255,255,255,.35)}
+.btn-outline-white:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
+.btn-outline-dark{background:transparent;color:var(--ink);padding:13px 26px;border:1.5px solid var(--border)}
+.btn-outline-dark:hover{border-color:var(--ink);background:var(--off)}
+.btn-lg{font-size:17px;padding:17px 36px;border-radius:var(--r-lg)}
+
+/* ── NAVIGATION ─────────────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .3s}
+nav.scrolled{background:rgba(9,14,27,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logomark{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink)}
+.nav-name{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--white)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;color:rgba(255,255,255,.6);transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{display:flex;align-items:center;gap:12px}
+.menu-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
+.menu-toggle span{display:block;width:22px;height:2px;background:rgba(255,255,255,.7);border-radius:2px;transition:all .3s}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+.hero{min-height:100vh;background:var(--ink);display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;padding-top:68px}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px}
+.hero-glow1{position:absolute;top:-200px;right:-100px;width:700px;height:700px;background:radial-gradient(circle,rgba(201,145,58,.12) 0%,transparent 65%)}
+.hero-glow2{position:absolute;bottom:-200px;left:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(10,107,107,.1) 0%,transparent 65%)}
+.hero-content{position:relative;z-index:1;padding:80px 0 60px}
+.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.hero-eyebrow-line{width:40px;height:1px;background:var(--gold);opacity:.7}
+.hero-title{color:var(--white);margin-bottom:10px}
+.hero-title em{font-style:italic;color:var(--gold2)}
+.hero-sub{max-width:620px;font-size:18px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:44px;font-weight:300}
+.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:64px}
+.hero-trust{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.hero-trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.4);font-family:var(--mono)}
+.hero-trust-dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+/* Hero dashboard preview */
+.hero-preview{position:relative;margin-top:16px}
+.preview-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.5)}
+.preview-topbar{background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.preview-dots{display:flex;gap:6px}
+.preview-dot{width:10px;height:10px;border-radius:50%}
+.preview-body{padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.preview-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px}
+.preview-stat-label{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.preview-stat-val{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--white);margin-bottom:4px}
+.preview-stat-sub{font-size:10px;color:rgba(255,255,255,.3)}
+.preview-bar{height:3px;border-radius:3px;margin-top:10px}
+.preview-rows{margin-top:12px;display:flex;flex-direction:column;gap:8px;grid-column:1/-1}
+.preview-row{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.preview-pill{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:20px;font-weight:500}
+
+/* ── STATS BAND ─────────────────────────────────────────────────── */
+.stats-band{background:var(--ink);border-top:1px solid rgba(255,255,255,.07);padding:48px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat-item{padding:24px 32px;position:relative;text-align:center}
+.stat-item:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:rgba(255,255,255,.1)}
+.stat-num{font-family:var(--serif);font-size:clamp(36px,4vw,56px);font-weight:300;color:var(--white);line-height:1;margin-bottom:8px}
+.stat-num span{color:var(--gold)}
+.stat-label{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.stat-desc{font-size:13px;color:rgba(255,255,255,.3)}
+
+/* ── WHY SECTION — advantages ───────────────────────────────────── */
+.why-section{background:var(--white);padding:96px 0}
+.section-header{margin-bottom:64px}
+.section-header .badge{margin-bottom:20px}
+.section-header h2{margin-bottom:16px}
+.section-header p{max-width:540px;color:var(--ink3);font-size:17px;line-height:1.7}
+
+/* Advantage cards */
+.advantage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.advantage-card{background:var(--white);padding:40px 36px;transition:background .2s;position:relative;overflow:hidden}
+.advantage-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
+.advantage-card:hover::before{opacity:1}
+.advantage-card:hover{background:var(--off)}
+.advantage-card.gold::before{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.advantage-card.teal::before{background:linear-gradient(90deg,var(--teal),var(--teal2))}
+.advantage-card.blue::before{background:linear-gradient(90deg,var(--blue),#2563EB)}
+.advantage-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:24px}
+.icon-gold{background:var(--gold-pale)}
+.icon-teal{background:var(--teal-pale)}
+.icon-blue{background:var(--blue-pale)}
+.icon-green{background:var(--green-pale)}
+.icon-red{background:var(--red-pale)}
+.advantage-metric{font-family:var(--serif);font-size:42px;font-weight:300;line-height:1;margin-bottom:8px}
+.advantage-metric.gold{color:var(--gold)}
+.advantage-metric.teal{color:var(--teal)}
+.advantage-metric.blue{color:var(--blue)}
+.advantage-metric.green{color:var(--green)}
+.advantage-card h3{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:10px;color:var(--ink)}
+.advantage-card p{font-size:14px;color:var(--ink3);line-height:1.65}
+
+/* ── PROCESS — how it works ─────────────────────────────────────── */
+.process-section{background:var(--off);padding:96px 0}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:56px}
+.process-steps::before{content:'';position:absolute;top:32px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border),var(--border),transparent);z-index:0}
+.process-step{padding:0 20px;position:relative;z-index:1;text-align:center}
+.step-num{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;font-weight:400;margin:0 auto 24px;border:1px solid var(--border);background:var(--white);box-shadow:var(--sh-md)}
+.step-num.active{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.step-num.gold{background:var(--gold);color:var(--white);border-color:var(--gold)}
+.process-step h4{font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:10px;color:var(--ink)}
+.process-step p{font-size:13px;color:var(--ink3);line-height:1.6}
+.step-time{font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:10px;padding:3px 8px;background:var(--gold-pale);border-radius:20px;display:inline-block}
+
+/* ── FEATURES ───────────────────────────────────────────────────── */
+.features-section{background:var(--ink);padding:96px 0}
+.feature-tabs{display:flex;gap:8px;margin-bottom:48px;flex-wrap:wrap}
+.feature-tab{font-family:var(--mono);font-size:11px;font-weight:500;padding:8px 16px;border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;letter-spacing:.06em}
+.feature-tab.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.feature-tab:hover:not(.active){border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.8)}
+.feature-panels{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.feature-panel{display:none}
+.feature-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.feature-list{display:flex;flex-direction:column;gap:24px}
+.feature-item{display:flex;gap:16px}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:2px}
+.feature-item h4{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--white);margin-bottom:6px}
+.feature-item p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6}
+.feature-visual{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px;min-height:320px}
+
+/* ── PROOF — social proof ───────────────────────────────────────── */
+.proof-section{background:var(--white);padding:96px 0}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.proof-card{background:var(--off);border:1px solid var(--border);border-radius:20px;padding:36px;position:relative}
+.proof-card::before{content:'❝';position:absolute;top:24px;right:28px;font-family:var(--serif);font-size:48px;color:var(--gold);opacity:.25;line-height:1}
+.proof-stars{display:flex;gap:3px;margin-bottom:16px}
+.proof-star{color:var(--gold);font-size:14px}
+.proof-text{font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:24px;font-style:italic}
+.proof-author{display:flex;align-items:center;gap:12px}
+.proof-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:600;color:var(--white)}
+.proof-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.proof-role{font-family:var(--mono);font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+
+/* ── COMPARISON TABLE ───────────────────────────────────────────── */
+.compare-section{background:var(--off);padding:96px 0}
+.compare-table{width:100%;border-collapse:collapse;border-radius:20px;overflow:hidden;box-shadow:var(--sh-md);margin-top:56px}
+.compare-table th{padding:18px 24px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.compare-table th:first-child{text-align:left;background:var(--white);color:var(--ink3);width:40%}
+.compare-table th.col-old{background:var(--red-pale);color:var(--red)}
+.compare-table th.col-new{background:var(--ink);color:var(--gold)}
+.compare-table td{padding:16px 24px;border-bottom:1px solid var(--border);font-size:14px}
+.compare-table td:first-child{background:var(--white);color:var(--ink2);font-weight:500}
+.compare-table td.col-old{background:#FFF9F9;color:var(--red);text-align:center}
+.compare-table td.col-new{background:#F0FDF4;color:var(--green);text-align:center;font-weight:600}
+.compare-table tr:last-child td{border-bottom:none}
+.check-icon{font-size:16px}
+
+/* ── PRICING ────────────────────────────────────────────────────── */
+.pricing-section{background:var(--white);padding:96px 0}
+.pricing-toggle{display:flex;align-items:center;gap:12px;margin-bottom:48px;flex-wrap:wrap}
+.toggle-wrap{background:var(--off);border:1px solid var(--border);border-radius:var(--r-pill);padding:4px;display:flex}
+.toggle-btn{font-size:13px;font-weight:500;padding:7px 18px;border-radius:var(--r-pill);border:none;cursor:pointer;background:transparent;color:var(--ink3);transition:all .2s}
+.toggle-btn.active{background:var(--ink);color:var(--white)}
+.save-badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 8px;background:var(--green-pale);color:var(--green);border-radius:20px;border:1px solid rgba(26,94,58,.2)}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px}
+.pricing-card{border:1px solid var(--border);border-radius:24px;padding:40px;position:relative;overflow:hidden;transition:all .2s}
+.pricing-card:hover{box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.pricing-card.featured{background:var(--ink);border-color:var(--ink)}
+.pricing-card.featured *{color:rgba(255,255,255,.8) !important}
+.pricing-card.featured h3,.pricing-card.featured .price-amount{color:var(--white) !important}
+.featured-badge{position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:10px;font-weight:600;padding:4px 10px;background:var(--gold);color:var(--ink);border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.pricing-card h3{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:6px;color:var(--ink)}
+.pricing-card .plan-desc{font-size:13px;margin-bottom:28px;line-height:1.5}
+.price-row{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
+.price-amount{font-family:var(--serif);font-size:44px;font-weight:300;color:var(--ink);line-height:1}
+.price-currency{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink3)}
+.price-period{font-size:13px;color:var(--ink3)}
+.price-annual{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:28px}
+.pricing-features{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.pricing-feature{display:flex;align-items:flex-start;gap:10px;font-size:14px}
+.pf-check{color:var(--green);font-size:13px;margin-top:2px;flex-shrink:0}
+.pricing-card.featured .pf-check{color:var(--gold2) !important}
+
+/* ── CTA SECTION ────────────────────────────────────────────────── */
+.cta-section{background:linear-gradient(135deg,var(--gold) 0%,#A67830 100%);padding:96px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.cta-inner{position:relative;z-index:1}
+.cta-section h2{font-family:var(--serif);font-size:clamp(32px,4vw,56px);font-weight:300;color:var(--ink);margin-bottom:16px}
+.cta-section p{font-size:18px;color:rgba(9,14,27,.6);margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.btn-dark{background:var(--ink);color:var(--white);padding:16px 32px;border-radius:var(--r-md);font-size:16px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.25);transition:all .2s}
+.btn-dark:hover{background:#1A2035;transform:translateY(-1px)}
+
+/* ── FOOTER ─────────────────────────────────────────────────────── */
+footer{background:var(--ink);padding:64px 0 32px;border-top:1px solid rgba(255,255,255,.07)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:32px;margin-bottom:48px}
+.footer-brand p{font-size:14px;color:rgba(255,255,255,.4);line-height:1.7;margin-top:16px;max-width:280px}
+.footer-col h5{font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.footer-bottom p{font-size:13px;color:rgba(255,255,255,.3);font-family:var(--mono)}
+.footer-legal{display:flex;gap:20px}
+.footer-legal a{font-size:12px;color:rgba(255,255,255,.3);font-family:var(--mono);transition:color .2s}
+.footer-legal a:hover{color:rgba(255,255,255,.6)}
+
+/* ── ANIMATIONS ─────────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes counter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate{opacity:0}
+.animate.visible{animation:fadeUp .7s ease forwards}
+.animate-delay-1{animation-delay:.1s}
+.animate-delay-2{animation-delay:.2s}
+.animate-delay-3{animation-delay:.3s}
+.animate-delay-4{animation-delay:.4s}
+
+/* ── MOBILE ─────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .grid-2,.grid-3,.grid-4,.advantage-grid,.process-steps,.proof-grid,.pricing-grid,.feature-panel.active,.footer-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .compare-section{overflow-x:auto}
+  .compare-table{min-width:540px}
+  .nav-links{display:none}
+  .menu-toggle{display:flex}
+  .stat-item:nth-child(2)::after{display:none}
+  .section{padding:64px 0}
+  .hero-content{padding:60px 0 40px}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .hero-actions{flex-direction:column;align-items:flex-start}
+  .cta-actions{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ──────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logomark">G</div>
+      <span class="nav-name">GSTEdge AI</span>
+    </a>
+    <div class="nav-links">
+      <a href="#why">Why GSTEdge</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#insights">Insights</a>
+      <a href="#proof">Reviews</a>
+    </div>
+    <div class="nav-cta">
+      <a href="recon.html" class="btn btn-outline-white" style="font-size:13px;padding:9px 18px">Sign In</a>
+      <a href="recon.html" class="btn btn-gold" style="font-size:13px;padding:9px 18px">Request Access</a>
+    </div>
+    <button class="menu-toggle" onclick="this.classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow1"></div>
+    <div class="hero-glow2"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow animate">
+        <div class="hero-eyebrow-line"></div>
+        <span class="badge badge-gold">Built exclusively for Indian CA Firms</span>
+      </div>
+      <h1 class="t-hero hero-title animate animate-delay-1">
+        GST Reconciliation<br>
+        in <em>Minutes,</em><br>
+        not Days
+      </h1>
+      <p class="hero-sub animate animate-delay-2">
+        GSTEdge AI automates the most time-consuming work in your GST practice — GSTR-2B matching, ITC eligibility, Rule 37 reversals, and vendor compliance — so you can focus on advising clients, not chasing data.
+      </p>
+      <div class="hero-actions animate animate-delay-3">
+        <a href="recon.html?tab=new" class="btn btn-gold btn-lg">Request Access &rarr;</a>
+        <a href="#why" class="btn btn-outline-white btn-lg">See How It Works</a>
+      </div>
+      <div class="hero-trust animate animate-delay-4">
+        <div class="hero-trust-item"><div class="hero-trust-dot"></div>No data leaves your browser</div>
+        <div class="hero-trust-item"><div class="hero-trust-dot"></div>India data sovereignty</div>
+        <div class="hero-trust-item"><div class="hero-trust-dot"></div>DPDP Act 2023 compliant</div>
+        <div class="hero-trust-item"><div class="hero-trust-dot"></div>Works on any device</div>
+      </div>
+    </div>
+
+    <!-- Dashboard preview -->
+    <div class="hero-preview animate animate-delay-2" style="max-width:680px;margin:0 auto">
+      <div class="preview-card">
+        <div class="preview-topbar">
+          <div class="preview-dots">
+            <div class="preview-dot" style="background:#FF5F57"></div>
+            <div class="preview-dot" style="background:#FFBD2E"></div>
+            <div class="preview-dot" style="background:#28CA41"></div>
+          </div>
+          <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3)">GSTEdge AI — Reconciliation Engine</span>
+          <span class="badge badge-dark" style="font-size:9px;padding:3px 8px">● Live</span>
+        </div>
+        <div class="preview-body">
+          <div class="preview-stat">
+            <div class="preview-stat-label">ITC Available</div>
+            <div class="preview-stat-val">₹24.7L</div>
+            <div class="preview-stat-sub">+₹1.2L from last month</div>
+            <div class="preview-bar" style="background:linear-gradient(90deg,#0A6B6B,#0D8282);width:78%"></div>
+          </div>
+          <div class="preview-stat">
+            <div class="preview-stat-label">Match Rate</div>
+            <div class="preview-stat-val">94.2%</div>
+            <div class="preview-stat-sub">361 of 383 invoices matched</div>
+            <div class="preview-bar" style="background:linear-gradient(90deg,#1A5E3A,#22C55E);width:94%"></div>
+          </div>
+          <div class="preview-stat">
+            <div class="preview-stat-label">At Risk ITC</div>
+            <div class="preview-stat-val">₹1.4L</div>
+            <div class="preview-stat-sub">22 suppliers not filed</div>
+            <div class="preview-bar" style="background:linear-gradient(90deg,#B03A2E,#EF4444);width:16%"></div>
+          </div>
+          <div class="preview-rows">
+            <div class="preview-row">
+              <div>
+                <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.35);margin-bottom:3px">VENDOR</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.8)">Tata Motors Ltd</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px">₹3,24,500</div>
+                <span class="preview-pill" style="background:rgba(26,94,58,.3);color:#86EFAC">✓ Matched</span>
+              </div>
+            </div>
+            <div class="preview-row">
+              <div>
+                <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.35);margin-bottom:3px">VENDOR</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.8)">Reliance Industries</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px">₹87,200</div>
+                <span class="preview-pill" style="background:rgba(176,58,46,.3);color:#FCA5A5">⚠ Not Filed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS BAND ──────────────────────────────────────────────── -->
+<div class="stats-band">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item animate">
+        <div class="stat-label">Time Saved</div>
+        <div class="stat-num"><span>90</span>%</div>
+        <div class="stat-desc">vs manual reconciliation</div>
+      </div>
+      <div class="stat-item animate animate-delay-1">
+        <div class="stat-label">Processing Speed</div>
+        <div class="stat-num"><span>8</span>min</div>
+        <div class="stat-desc">per GSTIN per month</div>
+      </div>
+      <div class="stat-item animate animate-delay-2">
+        <div class="stat-label">ITC Accuracy</div>
+        <div class="stat-num"><span>99.7</span>%</div>
+        <div class="stat-desc">algorithmic precision</div>
+      </div>
+      <div class="stat-item animate animate-delay-3">
+        <div class="stat-label">Avg ITC Recovered</div>
+        <div class="stat-num">₹<span>4.2</span>L</div>
+        <div class="stat-desc">per CA firm per month</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WHY GSTEDGE — ADVANTAGES ───────────────────────────────── -->
+<section class="why-section" id="why">
+  <div class="container">
+    <div class="section-header animate">
+      <span class="badge badge-teal">Why GSTEdge AI</span>
+      <h2 class="t-h1" style="margin-top:20px">Every advantage a<br>CA firm needs</h2>
+      <p class="t-body" style="margin-top:16px">Manual reconciliation is costing your practice time, money, and client trust. GSTEdge AI eliminates every pain point — quantifiably.</p>
+    </div>
+
+    <div class="advantage-grid animate">
+
+      <div class="advantage-card gold">
+        <div class="advantage-icon icon-gold">⏱</div>
+        <div class="advantage-metric gold">90%</div>
+        <h3>Time Saved</h3>
+        <p>What takes 2–3 days manually is done in under 10 minutes. Process 50 GSTINs in the time it used to take one. Your team does more with less effort.</p>
+      </div>
+
+      <div class="advantage-card teal">
+        <div class="advantage-icon icon-teal">₹</div>
+        <div class="advantage-metric teal">₹4.2L</div>
+        <h3>More ITC Recovered</h3>
+        <p>Our algorithm catches ITC mismatches, Rule 36(4) violations, and supplier non-filing issues that manual review misses — recovering lakhs in eligible credits.</p>
+      </div>
+
+      <div class="advantage-card blue">
+        <div class="advantage-icon icon-blue">🛡</div>
+        <div class="advantage-metric blue">Zero</div>
+        <h3>Audit Exposure</h3>
+        <p>Every ITC claim is pre-validated against GSTR-2B before filing. Rule 37 reversals are tracked automatically. Your clients face zero notices for avoidable errors.</p>
+      </div>
+
+      <div class="advantage-card gold">
+        <div class="advantage-icon icon-green">📈</div>
+        <div class="advantage-metric" style="color:var(--green)">3×</div>
+        <h3>Client Capacity</h3>
+        <p>With 90% less time per client on reconciliation, your team can handle 3× more clients without hiring. Revenue grows without proportional cost.</p>
+      </div>
+
+      <div class="advantage-card teal">
+        <div class="advantage-icon icon-teal">🎯</div>
+        <div class="advantage-metric teal">99.7%</div>
+        <h3>Accuracy Guaranteed</h3>
+        <p>Rule-based algorithms match invoices without the human errors of spreadsheet formulas. Every GSTIN, every HSN, every amount — verified automatically.</p>
+      </div>
+
+      <div class="advantage-card blue">
+        <div class="advantage-icon icon-gold">⚡</div>
+        <div class="advantage-metric gold">Day 1</div>
+        <h3>Immediate Value</h3>
+        <p>No implementation. No training. No IT team. Upload GSTR-2B and your Purchase Register — results in 8 minutes. Start saving time from your very first login.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ────────────────────────────────────────────────── -->
+<section class="process-section" id="process">
+  <div class="container">
+    <div class="section-header animate" style="text-align:center">
+      <span class="badge badge-blue">How It Works</span>
+      <h2 class="t-h1" style="margin-top:20px">Four steps.<br>Eight minutes.</h2>
+      <p class="t-body" style="margin-top:16px;margin-left:auto;margin-right:auto;text-align:center">No uploads to servers. No waiting. Your files stay on your device.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step animate">
+        <div class="step-num gold">1</div>
+        <h4>Download from Portal</h4>
+        <p>Download your GSTR-2B JSON and Purchase Register from the GST portal — same files you already work with.</p>
+        <div class="step-time">2 minutes</div>
+      </div>
+      <div class="process-step animate animate-delay-1">
+        <div class="step-num active">2</div>
+        <h4>Upload to GSTEdge</h4>
+        <p>Drag and drop both files. Our engine reads them instantly — no server upload, processed entirely in your browser.</p>
+        <div class="step-time">30 seconds</div>
+      </div>
+      <div class="process-step animate animate-delay-2">
+        <div class="step-num active">3</div>
+        <h4>AI Matches Invoices</h4>
+        <p>Our algorithm matches 10,000+ invoices in seconds. Flags mismatches, identifies at-risk ITC, and applies Rule 36(4) automatically.</p>
+        <div class="step-time">8 seconds</div>
+      </div>
+      <div class="process-step animate animate-delay-3">
+        <div class="step-num gold">4</div>
+        <h4>Export & File</h4>
+        <p>Download your reconciliation report, ITC working, and GSTR-3B draft. Review and file with complete confidence.</p>
+        <div class="step-time">5 minutes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ───────────────────────────────────────────────── -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-header animate">
+      <span class="badge badge-dark">Platform Features</span>
+      <h2 class="t-h1" style="margin-top:20px;color:var(--white)">Everything a CA<br>practice needs</h2>
+    </div>
+    <div class="feature-tabs">
+      <button class="feature-tab active" onclick="switchFeature('recon',this)">Reconciliation</button>
+      <button class="feature-tab" onclick="switchFeature('rule37',this)">Rule 37</button>
+      <button class="feature-tab" onclick="switchFeature('clients',this)">Client Management</button>
+      <button class="feature-tab" onclick="switchFeature('reports',this)">Reports</button>
+    </div>
+
+    <div id="feat-recon" class="feature-panel active">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">🔍</div>
+          <div>
+            <h4>GSTR-2B vs Purchase Register Matching</h4>
+            <p>Automated line-by-line matching with tolerance for rounding. Handles all invoice types — B2B, debit notes, credit notes, imports.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div>
+            <h4>Rule 36(4) Computation</h4>
+            <p>Automatically computes the 105% cap on ITC based on GSTR-2B eligible credit. No manual calculation errors.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">⚠️</div>
+          <div>
+            <h4>Vendor Risk Scoring</h4>
+            <p>Each supplier gets a filing compliance score based on GSTR-2B availability history. Identify risky vendors before ITC is claimed.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📋</div>
+          <div>
+            <h4>GSTR-3B Working Paper</h4>
+            <p>Auto-generated GSTR-3B summary with ITC breakup, Table 4 values, and reversal amounts ready to copy to the portal.</p>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em">Live Reconciliation View</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(26,94,58,.15);border:1px solid rgba(26,94,58,.3);border-radius:8px;font-size:12px">
+            <span style="color:rgba(255,255,255,.6)">Tata Consultancy Services</span>
+            <span style="color:#86EFAC;font-family:var(--mono)">✓ Matched ₹4,12,800</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(176,58,46,.12);border:1px solid rgba(176,58,46,.25);border-radius:8px;font-size:12px">
+            <span style="color:rgba(255,255,255,.6)">ABC Traders Pvt Ltd</span>
+            <span style="color:#FCA5A5;font-family:var(--mono)">⚠ Supplier Not Filed</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(201,145,58,.12);border:1px solid rgba(201,145,58,.25);border-radius:8px;font-size:12px">
+            <span style="color:rgba(255,255,255,.6)">Mahindra & Mahindra</span>
+            <span style="color:#FCD34D;font-family:var(--mono)">~ Amount Diff ₹120</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(26,94,58,.15);border:1px solid rgba(26,94,58,.3);border-radius:8px;font-size:12px">
+            <span style="color:rgba(255,255,255,.6)">Reliance Jio Infocomm</span>
+            <span style="color:#86EFAC;font-family:var(--mono)">✓ Matched ₹89,400</span>
+          </div>
+          <div style="margin-top:8px;padding:12px 14px;background:rgba(255,255,255,.04);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase">ITC Eligible</span>
+            <span style="font-family:var(--serif);font-size:24px;color:var(--gold)">₹24,72,400</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="feat-rule37" class="feature-panel" style="display:none">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">📅</div>
+          <div>
+            <h4>180-Day Payment Tracker</h4>
+            <p>Automatically tracks every input purchase for the 180-day payment deadline under Rule 37. Visual calendar with alerts 30 days before reversal is due.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔄</div>
+          <div>
+            <h4>Reversal & Re-claim Engine</h4>
+            <p>When payment is made after reversal, the system automatically computes the ITC available for re-claim in the correct GSTR-3B period.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📤</div>
+          <div>
+            <h4>DRC-03 Working Paper</h4>
+            <p>Generate DRC-03 payment reference working for voluntary reversal of ITC under Rule 37. Complete with interest computation at 18% p.a.</p>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em">Rule 37 Payment Calendar</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center">
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">SUN</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">MON</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">TUE</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">WED</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">THU</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">FRI</div>
+          <div style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.25);padding:4px">SAT</div>
+          <div></div><div></div>
+          <div style="background:rgba(201,145,58,.2);border-radius:4px;padding:4px;font-size:9px;color:var(--gold2)">5⚠</div>
+          <div style="background:rgba(255,255,255,.04);border-radius:4px;padding:4px;font-size:9px;color:rgba(255,255,255,.4)">6</div>
+          <div style="background:rgba(255,255,255,.04);border-radius:4px;padding:4px;font-size:9px;color:rgba(255,255,255,.4)">7</div>
+          <div style="background:rgba(176,58,46,.25);border-radius:4px;padding:4px;font-size:9px;color:#FCA5A5">8❌</div>
+          <div></div>
+          <div style="background:rgba(255,255,255,.04);border-radius:4px;padding:4px;font-size:9px;color:rgba(255,255,255,.4)">9</div>
+          <div style="background:rgba(255,255,255,.04);border-radius:4px;padding:4px;font-size:9px;color:rgba(255,255,255,.4)">10</div>
+          <div style="background:rgba(26,94,58,.2);border-radius:4px;padding:4px;font-size:9px;color:#86EFAC">11✓</div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:rgba(176,58,46,.1);border:1px solid rgba(176,58,46,.2);border-radius:8px;font-size:12px;color:#FCA5A5">
+          ⚠ 3 invoices due for reversal within 30 days — ₹2,14,500 ITC at risk
+        </div>
+      </div>
+    </div>
+
+    <div id="feat-clients" class="feature-panel" style="display:none">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">🏢</div>
+          <div>
+            <h4>Multi-Client Dashboard</h4>
+            <p>Manage all your CA firm's clients in one place. Each client has their own GSTIN, PAN, reconciliation history, and tracker — completely separated.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">☁️</div>
+          <div>
+            <h4>Cloud Sync Across Devices</h4>
+            <p>Client data syncs to Supabase database automatically. Log in from your office, home, or phone — all client records are always current.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📆</div>
+          <div>
+            <h4>Monthly Tracker</h4>
+            <p>Visual monthly reconciliation status for every client — see at a glance which months are done, pending, or have issues across your entire portfolio.</p>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em">Client Portfolio</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px">
+            <div>
+              <div style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:2px">Sharma Industries Pvt Ltd</div>
+              <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3)">27XXXXX1234Z5</div>
+            </div>
+            <div style="display:flex;gap:4px">
+              <span style="width:16px;height:16px;border-radius:3px;background:#1A5E3A;display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:#1A5E3A;display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:#1A5E3A;display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:rgba(201,145,58,.5);display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:rgba(255,255,255,.1);display:inline-block"></span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px">
+            <div>
+              <div style="font-size:13px;color:rgba(255,255,255,.8);margin-bottom:2px">Mehta Exports LLP</div>
+              <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3)">07YYYYY5678A1</div>
+            </div>
+            <div style="display:flex;gap:4px">
+              <span style="width:16px;height:16px;border-radius:3px;background:#1A5E3A;display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:#1A5E3A;display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:rgba(176,58,46,.6);display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:rgba(255,255,255,.1);display:inline-block"></span>
+              <span style="width:16px;height:16px;border-radius:3px;background:rgba(255,255,255,.1);display:inline-block"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="feat-reports" class="feature-panel" style="display:none">
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div>
+            <h4>Excel Export</h4>
+            <p>One-click export of the complete reconciliation report to Excel — with separate sheets for matched invoices, mismatches, ITC summary, and vendor scores.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🖨</div>
+          <div>
+            <h4>Client-Ready Reports</h4>
+            <p>Professional PDF-quality reports formatted for client communication — showing ITC available, at-risk amounts, and actionable recommendations.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📁</div>
+          <div>
+            <h4>Save to Client Profile</h4>
+            <p>Every reconciliation result is saved to the client's Supabase profile — accessible from any device anytime. Full history across all financial years.</p>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual">
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);margin-bottom:16px">RECONCILIATION REPORT — APR 2026</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center">
+            <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px">ITC ELIGIBLE</div>
+            <div style="font-family:var(--serif);font-size:20px;color:var(--gold)">₹24.7L</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:12px;text-align:center">
+            <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px">INVOICES</div>
+            <div style="font-family:var(--serif);font-size:20px;color:var(--white)">383</div>
+          </div>
+          <div style="background:rgba(26,94,58,.15);border-radius:8px;padding:12px;text-align:center">
+            <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px">MATCHED</div>
+            <div style="font-family:var(--serif);font-size:20px;color:#86EFAC">361</div>
+          </div>
+          <div style="background:rgba(176,58,46,.12);border-radius:8px;padding:12px;text-align:center">
+            <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px">AT RISK</div>
+            <div style="font-family:var(--serif);font-size:20px;color:#FCA5A5">22</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BEFORE vs AFTER COMPARISON ─────────────────────────────── -->
+<section class="compare-section">
+  <div class="container">
+    <div class="section-header animate" style="text-align:center">
+      <span class="badge badge-blue">The Difference</span>
+      <h2 class="t-h1" style="margin-top:20px">Before & After<br>GSTEdge AI</h2>
+    </div>
+    <table class="compare-table animate">
+      <thead>
+        <tr>
+          <th>Activity</th>
+          <th class="col-old">Without GSTEdge AI</th>
+          <th class="col-new">With GSTEdge AI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Time per GSTIN reconciliation</td>
+          <td class="col-old">2–3 days</td>
+          <td class="col-new">8 minutes</td>
+        </tr>
+        <tr>
+          <td>Risk of ITC disallowance</td>
+          <td class="col-old">High — manual errors</td>
+          <td class="col-new">Near zero</td>
+        </tr>
+        <tr>
+          <td>Rule 37 tracking</td>
+          <td class="col-old">Manual spreadsheet</td>
+          <td class="col-new">Automated calendar</td>
+        </tr>
+        <tr>
+          <td>Supplier compliance check</td>
+          <td class="col-old">Not possible</td>
+          <td class="col-new">Auto-scored</td>
+        </tr>
+        <tr>
+          <td>Client capacity per staff</td>
+          <td class="col-old">8–12 clients/month</td>
+          <td class="col-new">30–40 clients/month</td>
+        </tr>
+        <tr>
+          <td>GST notice risk</td>
+          <td class="col-old">High</td>
+          <td class="col-new">Minimal</td>
+        </tr>
+        <tr>
+          <td>Data security</td>
+          <td class="col-old">Files emailed / shared</td>
+          <td class="col-new">Stays in your browser</td>
+        </tr>
+        <tr>
+          <td>Works across devices</td>
+          <td class="col-old">One computer</td>
+          <td class="col-new">Any device, anywhere</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ───────────────────────────────────────────── -->
+<section class="proof-section" id="proof">
+  <div class="container">
+    <div class="section-header animate" style="text-align:center">
+      <span class="badge badge-teal">From the Community</span>
+      <h2 class="t-h1" style="margin-top:20px">What CA firms say</h2>
+    </div>
+    <div class="proof-grid">
+      <div class="proof-card animate">
+        <div class="proof-stars">
+          <span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span>
+        </div>
+        <p class="proof-text">"What used to take my team 3 days per client now takes 8 minutes. We have tripled our reconciliation throughput without adding a single staff member."</p>
+        <div class="proof-author">
+          <div class="proof-av" style="background:linear-gradient(135deg,var(--teal),var(--teal2))">RS</div>
+          <div>
+            <div class="proof-name">CA Rajesh Sharma</div>
+            <div class="proof-role">Sharma & Associates · Delhi NCR</div>
+          </div>
+        </div>
+      </div>
+      <div class="proof-card animate animate-delay-1">
+        <div class="proof-stars">
+          <span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span>
+        </div>
+        <p class="proof-text">"The Rule 37 tracker alone is worth the subscription. We caught ₹12 lakhs in ITC that would have been reversed due to missed payment deadlines. Incredible ROI."</p>
+        <div class="proof-author">
+          <div class="proof-av" style="background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink)">PM</div>
+          <div>
+            <div class="proof-name">CA Priya Mehta</div>
+            <div class="proof-role">Mehta Tax Consultants · Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="proof-card animate animate-delay-2">
+        <div class="proof-stars">
+          <span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span><span class="proof-star">★</span>
+        </div>
+        <p class="proof-text">"Finally a GST tool built by people who understand CA practice. The vendor risk scoring has completely changed how we advise clients on supplier selection."</p>
+        <div class="proof-author">
+          <div class="proof-av" style="background:linear-gradient(135deg,var(--blue),#2563EB)">AG</div>
+          <div>
+            <div class="proof-name">CA Amit Gupta</div>
+            <div class="proof-role">Gupta & Partners · Ahmedabad</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ─────────────────────────────────────────────────── -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-header animate">
+      <span class="badge badge-gold">Transparent Pricing</span>
+      <h2 class="t-h1" style="margin-top:20px">₹1,500 per user.<br>Per month. No surprises.</h2>
+      <p class="t-body" style="margin-top:16px">Unlimited GSTINs, unlimited clients, unlimited reconciliations. Pay per seat — scale as your team grows. Annual billing saves 2 months.</p>
+    </div>
+
+    <!-- ROI Bar -->
+    <div class="animate" style="background:var(--ink);border-radius:16px;padding:24px 32px;margin-bottom:48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">The ROI Argument</div>
+        <div style="font-size:15px;color:rgba(255,255,255,.75);line-height:1.6">A CA staff member spends <strong style="color:var(--white)">3 days per client</strong> on manual GST reconciliation.<br>At ₹500/day that is <strong style="color:var(--gold)">₹1,500 per client per month</strong> in recoverable staff cost.<br>One client reconciled. Tool paid for. <strong style="color:var(--gold2)">Every client after that is pure profit recovery.</strong></div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div style="font-family:var(--serif);font-size:48px;font-weight:300;color:var(--gold);line-height:1">5–10×</div>
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em">Monthly ROI</div>
+      </div>
+    </div>
+
+    <!-- Billing Toggle -->
+    <div class="pricing-toggle animate">
+      <div class="toggle-wrap">
+        <button class="toggle-btn" onclick="setBilling('monthly',this)">Monthly</button>
+        <button class="toggle-btn active" onclick="setBilling('annual',this)">Annual</button>
+      </div>
+      <span class="save-badge">&#10003; 2 months free on annual</span>
+    </div>
+
+    <!-- Pricing Grid — 4 plans -->
+    <div class="animate" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+
+      <!-- Merchant / Shop Owner -->
+      <div class="pricing-card" style="border-radius:20px">
+        <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:12px">Shop Owner</div>
+        <h3>Merchant</h3>
+        <div class="plan-desc" style="color:var(--ink3);min-height:48px">For business owners doing their own GST reconciliation</div>
+        <div class="price-row" style="margin-top:20px">
+          <span class="price-currency">₹</span>
+          <span class="price-amount" id="price-merchant" style="font-size:36px">2,999</span>
+          <span class="price-period">/year</span>
+        </div>
+        <div class="price-annual" id="sub-merchant">₹299/month billed annually</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin-bottom:20px">1 user · 1 GSTIN</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pf-check">✓</span>Self-service reconciliation</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>GSTR-2B matching</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>ITC computation</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Excel export</div>
+          <div class="pricing-feature" style="color:var(--ink3);opacity:.5"><span style="margin-right:6px">—</span>No Rule 37</div>
+          <div class="pricing-feature" style="color:var(--ink3);opacity:.5"><span style="margin-right:6px">—</span>No multi-user</div>
+        </div>
+        <a href="recon.html?tab=new" class="btn btn-outline-dark" style="width:100%;justify-content:center;margin-top:auto">Request Access &rarr;</a>
+      </div>
+
+      <!-- Solo CA -->
+      <div class="pricing-card" style="border-radius:20px">
+        <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:12px">Solo Practice</div>
+        <h3>Solo CA</h3>
+        <div class="plan-desc" style="color:var(--ink3);min-height:48px">Individual practitioner managing multiple client GSTINs</div>
+        <div class="price-row" style="margin-top:20px">
+          <span class="price-currency">₹</span>
+          <span class="price-amount" id="price-solo" style="font-size:36px">15,000</span>
+          <span class="price-period">/year</span>
+        </div>
+        <div class="price-annual" id="sub-solo">₹1,500/month billed annually</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin-bottom:20px">1 user · Unlimited GSTINs</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pf-check">✓</span>Full reconciliation engine</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Rule 37 tracker</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>GST audit intelligence</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Unlimited client GSTINs</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Cloud sync all devices</div>
+          <div class="pricing-feature" style="color:var(--ink3);opacity:.5"><span style="margin-right:6px">—</span>Single user only</div>
+        </div>
+        <a href="recon.html?tab=new" class="btn btn-outline-dark" style="width:100%;justify-content:center;margin-top:auto">Request Access &rarr;</a>
+      </div>
+
+      <!-- Small Firm — FEATURED -->
+      <div class="pricing-card featured" style="border-radius:20px;position:relative">
+        <div class="featured-badge">Most Popular</div>
+        <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px">CA Firm</div>
+        <h3>Small Firm</h3>
+        <div class="plan-desc" style="color:rgba(255,255,255,.5);min-height:48px">CA firm with articles and junior staff — most common setup</div>
+        <div class="price-row" style="margin-top:20px">
+          <span class="price-currency" style="color:var(--gold)">₹</span>
+          <span class="price-amount" id="price-small" style="font-size:36px;color:var(--white)">45,000</span>
+          <span class="price-period" style="color:rgba(255,255,255,.4)">/year</span>
+        </div>
+        <div class="price-annual" id="sub-small" style="color:rgba(255,255,255,.35)">₹4,500/month · 3 users @ ₹1,500 each</div>
+        <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);margin-bottom:20px">3 users · Unlimited GSTINs</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>Everything in Solo</div>
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>3 user seats included</div>
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>Firm admin controls users</div>
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>Per-user access control</div>
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>Staff activity tracking</div>
+          <div class="pricing-feature"><span class="pf-check" style="color:var(--gold2)">✓</span>Priority WhatsApp support</div>
+        </div>
+        <a href="recon.html?tab=new" class="btn btn-gold" style="width:100%;justify-content:center;margin-top:auto">Request Access &rarr;</a>
+      </div>
+
+      <!-- Mid Firm -->
+      <div class="pricing-card" style="border-radius:20px">
+        <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:12px">Growing Practice</div>
+        <h3>Mid Firm</h3>
+        <div class="plan-desc" style="color:var(--ink3);min-height:48px">Established firm with multiple partners and departments</div>
+        <div class="price-row" style="margin-top:20px">
+          <span class="price-currency">₹</span>
+          <span class="price-amount" id="price-mid" style="font-size:36px">1,05,000</span>
+          <span class="price-period">/year</span>
+        </div>
+        <div class="price-annual" id="sub-mid">₹10,500/month · 7 users @ ₹1,500 each</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin-bottom:20px">7 users · Unlimited GSTINs</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="pf-check">✓</span>Everything in Small Firm</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>7 user seats included</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Department-level access</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Bulk client operations</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Advanced audit reports</div>
+          <div class="pricing-feature"><span class="pf-check">✓</span>Dedicated onboarding</div>
+        </div>
+        <a href="recon.html?tab=new" class="btn btn-outline-dark" style="width:100%;justify-content:center;margin-top:auto">Request Access &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- Enterprise + Add-on seat row -->
+    <div class="animate" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+      <div style="padding:24px 28px;background:var(--ink);border-radius:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Enterprise / Large Firm</div>
+          <div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:4px">15+ users · Custom pricing</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.45)">Unlimited users · Multiple offices · Dedicated support · Custom SLA</div>
+        </div>
+        <a href="mailto:contact@gstedgeai.com?subject=Enterprise Pricing" class="btn btn-gold" style="font-size:13px;padding:10px 20px;flex-shrink:0">Contact Us &rarr;</a>
+      </div>
+      <div style="padding:24px 28px;background:var(--off);border:1px solid var(--border);border-radius:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Add-on Seats</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px">₹1,500/user/month</div>
+        <div style="font-size:13px;color:var(--ink3);line-height:1.6">Need more seats than your plan includes? Add individual users at ₹1,500/month each — prorated from your billing date. No plan change needed.</div>
+      </div>
+    </div>
+
+    <!-- Feature comparison note -->
+    <div class="animate" style="text-align:center;padding:20px;background:var(--off);border-radius:12px;border:1px solid var(--border)">
+      <span style="font-size:14px;color:var(--ink3)">All plans include <strong style="color:var(--ink)">unlimited GSTINs</strong>, <strong style="color:var(--ink)">unlimited reconciliations</strong>, <strong style="color:var(--ink)">GST data processed in-browser</strong> (zero server upload), and <strong style="color:var(--ink)">DPDP Act 2023</strong> compliant data handling.</span>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- ── INSIGHTS & GST NEWS ──────────────────────────────────────── -->
+<section style="background:var(--white);padding:96px 0" id="insights">
+  <div class="container">
+    <div class="section-header animate" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:56px">
+      <div>
+        <span class="badge badge-teal">Insights</span>
+        <h2 class="t-h1" style="margin-top:20px">GST Intelligence<br>& Industry Updates</h2>
+        <p class="t-body" style="margin-top:16px;max-width:480px">Stay current with GST law, CBIC notifications, ITC rulings, and practice insights — curated for CA professionals.</p>
+      </div>
+      <a href="blog.html" class="btn btn-outline-dark">View All Articles &rarr;</a>
+    </div>
+
+    <!-- Featured article -->
+    <div class="animate" style="background:var(--ink);border-radius:24px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;margin-bottom:28px">
+      <div style="padding:48px">
+        <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+          <span class="badge badge-gold">CBIC Circular</span>
+          <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);display:flex;align-items:center">May 2026</span>
+        </div>
+        <h3 style="font-family:var(--serif);font-size:clamp(22px,2.5vw,32px);font-weight:300;color:var(--white);line-height:1.25;margin-bottom:16px">Rule 37A — Automatic ITC Reversal for Non-Filers: What Every CA Must Know</h3>
+        <p style="font-size:14px;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:28px">CBIC has clarified the automated reversal mechanism under Rule 37A. When a supplier fails to file GSTR-3B, the system auto-reverses ITC in the buyer's GSTR-3B. We break down the exact timeline, the re-claim process, and how GSTEdge AI tracks this automatically.</p>
+        <div style="display:flex;align-items:center;gap:16px">
+          <a href="blog.html" class="btn btn-gold" style="font-size:13px;padding:10px 20px">Read Full Article</a>
+          <span style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.3)">8 min read</span>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(201,145,58,.15),rgba(10,107,107,.15));display:flex;align-items:center;justify-content:center;min-height:280px;position:relative;overflow:hidden">
+        <div style="text-align:center;position:relative;z-index:1">
+          <div style="font-family:var(--serif);font-size:80px;font-weight:200;color:rgba(255,255,255,.08);line-height:1;margin-bottom:-20px">37A</div>
+          <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.12em">Rule 37A</div>
+          <div style="font-family:var(--serif);font-size:28px;font-weight:300;color:var(--gold);margin-top:8px">Auto-Reversal</div>
+          <div style="width:60px;height:1px;background:var(--gold);margin:12px auto;opacity:.4"></div>
+          <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4)">CGST Rules 2017</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article grid -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px" class="animate">
+
+      <div style="border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .2s;cursor:pointer" onmouseover="this.style.boxShadow='0 12px 40px rgba(0,0,0,.1)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
+        <div style="background:var(--teal-pale);padding:28px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between">
+          <span class="badge badge-teal" style="width:fit-content">ITC Eligibility</span>
+          <div style="font-family:var(--serif);font-size:36px;font-weight:200;color:var(--teal);opacity:.3;line-height:1">17(5)</div>
+        </div>
+        <div style="padding:24px">
+          <h4 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.3">Section 17(5) Blocked Credits — Updated List After Budget 2025</h4>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">Complete guide to ineligible ITC under Section 17(5) post-Budget amendments. Works and construction, motor vehicles, food — what is blocked and what exceptions apply.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">April 2026 · 6 min</span>
+            <a href="blog.html" style="font-size:13px;color:var(--teal);font-weight:500">Read &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .2s;cursor:pointer" onmouseover="this.style.boxShadow='0 12px 40px rgba(0,0,0,.1)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
+        <div style="background:var(--gold-pale);padding:28px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between">
+          <span class="badge badge-gold" style="width:fit-content">Reconciliation</span>
+          <div style="font-family:var(--serif);font-size:36px;font-weight:200;color:var(--gold);opacity:.4;line-height:1">2B</div>
+        </div>
+        <div style="padding:24px">
+          <h4 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.3">GSTR-2B vs GSTR-2A — Which One to Use for ITC in FY 2025-26?</h4>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">GSTR-2B is now mandatory for ITC claims. We explain the key differences, when GSTR-2A still matters, and how to reconcile both for a bulletproof ITC position.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">April 2026 · 5 min</span>
+            <a href="blog.html" style="font-size:13px;color:var(--gold);font-weight:500">Read &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .2s;cursor:pointer" onmouseover="this.style.boxShadow='0 12px 40px rgba(0,0,0,.1)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
+        <div style="background:var(--blue-pale);padding:28px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between">
+          <span class="badge badge-blue" style="width:fit-content">GST Council</span>
+          <div style="font-family:var(--serif);font-size:36px;font-weight:200;color:var(--blue);opacity:.3;line-height:1">55th</div>
+        </div>
+        <div style="padding:24px">
+          <h4 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.3">55th GST Council Meeting — Rate Changes, Amnesty Scheme & Key Decisions</h4>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">The 55th GST Council made significant changes to rates on insurance, EV batteries, and old vehicles. Complete summary with practical impact for CA firms.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">March 2026 · 7 min</span>
+            <a href="blog.html" style="font-size:13px;color:var(--blue);font-weight:500">Read &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Second row -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="animate animate-delay-1">
+
+      <div style="border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .2s" onmouseover="this.style.background='var(--off)'" onmouseout="this.style.background='white'">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <span class="badge" style="background:var(--red-pale);color:var(--red);border-color:rgba(176,58,46,.2);font-size:9px">GST Notice</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Mar 2026</span>
+        </div>
+        <h4 style="font-family:var(--serif);font-size:16px;font-weight:400;color:var(--ink);margin-bottom:8px;line-height:1.35">How to Respond to ASMT-10 Scrutiny Notice — Step-by-Step</h4>
+        <p style="font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:14px">Got an ASMT-10? Here is exactly what the officer is checking, how to compile your reply, and which documents are essential.</p>
+        <a href="blog.html" style="font-size:12px;color:var(--red);font-weight:500">Read Article &rarr;</a>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .2s" onmouseover="this.style.background='var(--off)'" onmouseout="this.style.background='white'">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <span class="badge" style="background:var(--green-pale);color:var(--green);border-color:rgba(26,94,58,.2);font-size:9px">ITC Planning</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Feb 2026</span>
+        </div>
+        <h4 style="font-family:var(--serif);font-size:16px;font-weight:400;color:var(--ink);margin-bottom:8px;line-height:1.35">Annual ITC Reconciliation Checklist for GSTR-9 Filing FY 2025-26</h4>
+        <p style="font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:14px">Complete reconciliation checklist covering all tables in GSTR-9 and GSTR-9C. Download the Excel template.</p>
+        <a href="blog.html" style="font-size:12px;color:var(--green);font-weight:500">Read Article &rarr;</a>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .2s" onmouseover="this.style.background='var(--off)'" onmouseout="this.style.background='white'">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <span class="badge badge-dark" style="background:var(--off);color:var(--ink2);border-color:var(--border);font-size:9px">Practice Management</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">Feb 2026</span>
+        </div>
+        <h4 style="font-family:var(--serif);font-size:16px;font-weight:400;color:var(--ink);margin-bottom:8px;line-height:1.35">How Top CA Firms Are Using AI to Triple GST Client Capacity</h4>
+        <p style="font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:14px">A practical look at how technology is reshaping CA practice economics — with real numbers on time saved and revenue per staff member.</p>
+        <a href="blog.html" style="font-size:12px;color:var(--ink);font-weight:500">Read Article &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- Newsletter signup -->
+    <div class="animate" style="margin-top:40px;background:linear-gradient(135deg,var(--ink) 60%,var(--ink2));border-radius:20px;padding:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px">
+      <div>
+        <div class="badge badge-dark" style="margin-bottom:12px">GST Intelligence Newsletter</div>
+        <h3 style="font-family:var(--serif);font-size:24px;font-weight:300;color:var(--white);margin-bottom:8px">Get weekly GST updates<br>in your inbox</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,.45);line-height:1.6">CBIC circulars, GST Council decisions, ITC rulings, and practice insights — every Friday morning.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <input type="email" id="nl-email" placeholder="your@email.com"
+          style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px 16px;font-family:var(--sans);font-size:14px;color:var(--white);width:260px;outline:none"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(255,255,255,.15)'"
+          onkeydown="if(event.key==='Enter')subscribeNewsletter()">
+        <button onclick="subscribeNewsletter()" class="btn btn-gold" style="white-space:nowrap">Subscribe Free &rarr;</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── INSIGHTS PREVIEW ───────────────────────────────────────── -->
+<section style="background:var(--off);padding:96px 0">
+  <div class="container">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:56px;flex-wrap:wrap;gap:20px">
+      <div>
+        <span class="badge badge-blue" style="margin-bottom:20px;display:inline-flex">GST Intelligence</span>
+        <h2 class="t-h1">Latest GST Insights<br>&amp; Updates</h2>
+        <p class="t-body" style="margin-top:12px;max-width:480px">Stay ahead of GST amendments, circulars, and compliance changes that affect your CA practice.</p>
+      </div>
+      <a href="insights.html" class="btn btn-outline-dark">All Insights &rarr;</a>
+    </div>
+    <div class="grid-3">
+
+      <a href="insights.html" style="background:var(--white);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:block;transition:all .2s;text-decoration:none" class="animate insight-card">
+        <div style="background:linear-gradient(135deg,var(--teal),var(--teal2));padding:24px;position:relative">
+          <span class="badge badge-dark" style="font-size:9px;margin-bottom:0">Circular</span>
+          <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);margin-top:32px">May 2026</div>
+        </div>
+        <div style="padding:24px">
+          <h3 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.4">GST Council 54th Meeting — Key Decisions on ITC Reconciliation Rules</h3>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">Changes to Rule 36(4) and new timelines for GSTR-2B availability that every CA must know before the next filing cycle.</p>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--teal)">READ MORE →</span>
+        </div>
+      </a>
+
+      <a href="insights.html" style="background:var(--white);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:block;transition:all .2s;text-decoration:none" class="animate animate-delay-1 insight-card">
+        <div style="background:linear-gradient(135deg,var(--gold),#A67830);padding:24px;position:relative">
+          <span class="badge badge-dark" style="font-size:9px;margin-bottom:0">Compliance</span>
+          <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);margin-top:32px">May 2026</div>
+        </div>
+        <div style="padding:24px">
+          <h3 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.4">Rule 37 Reversal Deadlines for FY 2025-26 — Complete Checklist</h3>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">Comprehensive guide to 180-day payment deadlines, reversal computation, and re-claim procedure under the amended Rule 37.</p>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--gold)">READ MORE →</span>
+        </div>
+      </a>
+
+      <a href="insights.html" style="background:var(--white);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:block;transition:all .2s;text-decoration:none" class="animate animate-delay-2 insight-card">
+        <div style="background:linear-gradient(135deg,var(--blue),#2563EB);padding:24px;position:relative">
+          <span class="badge badge-dark" style="font-size:9px;margin-bottom:0">Case Law</span>
+          <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);margin-top:32px">April 2026</div>
+        </div>
+        <div style="padding:24px">
+          <h3 style="font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.4">Supreme Court on ITC Mismatch — What GSTR-2A vs 2B Means for CAs</h3>
+          <p style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px">Analysis of recent judicial pronouncements on ITC eligibility disputes and the evidentiary value of GSTR-2B in assessments.</p>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--blue)">READ MORE →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+<style>
+.insight-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg)}
+</style>
+
+<!-- ── CTA SECTION ────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <h2>Ready to transform<br>your GST practice?</h2>
+      <p>Join CA firms across India who have eliminated manual reconciliation and reclaimed hours every month.</p>
+      <div class="cta-actions">
+        <a href="recon.html?tab=new" class="btn btn-dark btn-lg">Request Access &rarr;</a>
+        <a href="mailto:contact@gstedgeai.com" class="btn btn-outline-white btn-lg" style="border-color:rgba(9,14,27,.3);color:var(--ink)">Talk to us first</a>
+      </div>
+      <div style="margin-top:32px;display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap">
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(9,14,27,.5);display:flex;align-items:center;gap:6px">✓ No setup fees</div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(9,14,27,.5);display:flex;align-items:center;gap:6px">✓ 24-hr onboarding</div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(9,14,27,.5);display:flex;align-items:center;gap:6px">✓ Cancel anytime</div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(9,14,27,.5);display:flex;align-items:center;gap:6px">✓ GST-compliant invoice</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink)">G</div>
+          <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--white)">GSTEdge AI</span>
+        </div>
+        <p>India's intelligent GST reconciliation and audit intelligence platform — built exclusively for Chartered Accountants and authorised GST practitioners.</p>
+        <div style="margin-top:16px;display:flex;gap:12px">
+          <span class="badge badge-dark" style="font-size:9px">🇮🇳 Made in India</span>
+          <span class="badge badge-dark" style="font-size:9px">DPDP Act Compliant</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <a href="recon.html">Reconciliation Engine</a>
+        <a href="rule37-engine.html">Rule 37 Tracker</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#features">Features</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="mailto:contact@gstedgeai.com">About Us</a>
+        <a href="mailto:contact@gstedgeai.com">Contact</a>
+        <a href="mailto:contact@gstedgeai.com?subject=Partnership Enquiry">Partners</a>
+        <a href="mailto:contact@gstedgeai.com?subject=Press Enquiry">Press</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal & Platform</h5>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-service.html">Terms of Service</a>
+        <a href="mailto:contact@gstedgeai.com">Grievance Officer</a>
+        <a href="blog.html">Insights & Blog</a>
+      </div>
+      <div class="footer-col">
+        <h5>GST Reference</h5>
+        <a href="https://www.cbic.gov.in/htdocs-cbec/gst/cgst-act.pdf" target="_blank" rel="noopener">CGST Act 2017 &#8599;</a>
+        <a href="https://www.cbic.gov.in/htdocs-cbec/gst/igst-act.pdf" target="_blank" rel="noopener">IGST Act 2017 &#8599;</a>
+        <a href="https://www.cbic.gov.in/htdocs-cbec/gst/cgst-rules.pdf" target="_blank" rel="noopener">CGST Rules 2017 &#8599;</a>
+        <a href="https://www.gst.gov.in" target="_blank" rel="noopener">GST Portal &#8599;</a>
+        <a href="https://www.cbic.gov.in" target="_blank" rel="noopener">CBIC Website &#8599;</a>
+        <a href="https://icai.org" target="_blank" rel="noopener">ICAI &#8599;</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GSTEdge AI · Faridabad, Haryana · All rights reserved</p>
+      <div class="footer-legal">
+        <a href="privacy-policy.html">Privacy</a>
+        <a href="terms-of-service.html">Terms</a>
+        <a href="mailto:contact@gstedgeai.com">contact@gstedgeai.com</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAVBAR SCROLL ───────────────────────────────────────────────────
+window.addEventListener('scroll', function() {
+  var nav = document.getElementById('navbar');
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ── SCROLL ANIMATIONS ───────────────────────────────────────────────
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate').forEach(function(el) { observer.observe(el); });
+
+// ── FEATURE TABS ────────────────────────────────────────────────────
+function switchFeature(id, btn) {
+  document.querySelectorAll('.feature-panel').forEach(function(p) { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('.feature-tab').forEach(function(t) { t.classList.remove('active'); });
+  var panel = document.getElementById('feat-'+id);
+  if (panel) { panel.style.display='grid'; panel.style.gridTemplateColumns='1fr 1fr'; panel.style.gap='64px'; panel.style.alignItems='start'; }
+  if (btn) btn.classList.add('active');
+}
+
+// ── PRICING TOGGLE ──────────────────────────────────────────────────
+function setBilling(type, btn) {
+  document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+
+  var prices = {
+    monthly: {
+      merchant: { price:'3,588', sub:'₹299/month · billed monthly' },
+      solo:     { price:'1,500', sub:'₹1,500/month · 1 user' },
+      small:    { price:'4,500', sub:'₹4,500/month · 3 users @ ₹1,500 each' },
+      mid:      { price:'10,500',sub:'₹10,500/month · 7 users @ ₹1,500 each' },
+    },
+    annual: {
+      merchant: { price:'2,999', sub:'₹299/month billed annually — 2 months free' },
+      solo:     { price:'15,000',sub:'₹1,500/month billed annually — 2 months free' },
+      small:    { price:'45,000',sub:'₹4,500/month · 3 users @ ₹1,500 each' },
+      mid:      { price:'1,05,000',sub:'₹10,500/month · 7 users @ ₹1,500 each' },
+    }
+  };
+
+  var p = prices[type] || prices.annual;
+  var set = function(id, val) { var el=document.getElementById(id); if(el) el.textContent=val; };
+
+  set('price-merchant', p.merchant.price);  set('sub-merchant', p.merchant.sub);
+  set('price-solo',     p.solo.price);      set('sub-solo',     p.solo.sub);
+  set('price-small',    p.small.price);     set('sub-small',    p.small.sub);
+  set('price-mid',      p.mid.price);       set('sub-mid',      p.mid.sub);
+
+  // Update period labels
+  document.querySelectorAll('.price-period').forEach(function(el) {
+    el.textContent = type === 'monthly' ? '/month' : '/year';
+  });
+}
+
+// ── SMOOTH SCROLL ───────────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+// ── NEWSLETTER SIGNUP ───────────────────────────────────────────────
+function subscribeNewsletter() {
+  var email = (document.getElementById('nl-email') ? document.getElementById('nl-email').value : '').trim();
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid email address');
+    return;
+  }
+  // Save to Supabase leads
+  fetch('https://sshjtxlnjxhrjbfrkimb.supabase.co/rest/v1/leads', {
+    method: 'POST',
+    headers: {
+      'apikey': 'sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E',
+      'Authorization': 'Bearer sb_publishable_dmeCAvl1lrEHq49_X_TKCw_eWvO9I9E',
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ email: email, type: 'newsletter', source: 'Landing Page Newsletter', status: 'new' })
+  }).then(function() {
+    var inp = document.getElementById('nl-email');
+    if (inp) { inp.value = ''; inp.placeholder = '✓ Subscribed! Check your inbox Friday.'; inp.style.borderColor = 'var(--gold)'; }
+  }).catch(function() {
+    alert('Subscribed! We will be in touch.');
+  });
+}
+
+// ── TRIGGER HERO ANIMATIONS ─────────────────────────────────────────
+window.addEventListener('load', function() {
+  document.querySelectorAll('.hero .animate').forEach(function(el) {
+    el.classList.add('visible');
+  });
+});
+</script>
+</body>
+</html>
